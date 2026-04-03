@@ -2,7 +2,6 @@
 
 import { Fragment, useMemo, useState } from "react";
 import Link from "next/link";
-import { TransferStatus } from "@prisma/client";
 import { ChevronDown, ChevronUp, Download, ShieldCheck } from "lucide-react";
 import { TransferStatusBadge } from "@/components/kova/status-badge";
 import { buttonVariants } from "@/components/ui/button";
@@ -15,18 +14,20 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import {
+  appTransferStatuses,
   demoTransfers,
   formatCurrency,
   formatShortDate,
+  type AppTransferStatus,
   type DemoTransfer,
 } from "@/lib/demo-data";
 import { cn } from "@/lib/utils";
 
-const filters: Array<{ label: string; value: "ALL" | TransferStatus }> = [
+const filters: Array<{ label: string; value: "ALL" | AppTransferStatus }> = [
   { label: "All", value: "ALL" },
-  { label: "Completed", value: TransferStatus.COMPLETED },
-  { label: "Pending", value: TransferStatus.PREVIEWED },
-  { label: "Failed", value: TransferStatus.FAILED },
+  { label: "Completed", value: appTransferStatuses.COMPLETED },
+  { label: "Pending", value: appTransferStatuses.PREVIEWED },
+  { label: "Failed", value: appTransferStatuses.FAILED },
 ];
 
 function buildCsv(transfers: DemoTransfer[]) {
@@ -51,7 +52,7 @@ export function HistoryTable({
 }: {
   transfers?: DemoTransfer[];
 }) {
-  const [selectedFilter, setSelectedFilter] = useState<"ALL" | TransferStatus>(
+  const [selectedFilter, setSelectedFilter] = useState<"ALL" | AppTransferStatus>(
     "ALL",
   );
   const [expandedTransferId, setExpandedTransferId] = useState<string | null>(

@@ -2,7 +2,6 @@
 
 import { startTransition, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import { RailName } from "@prisma/client";
 import {
   ArrowRight,
   CheckCircle2,
@@ -20,6 +19,7 @@ import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
 import {
+  appRailNames,
   demoRecipients,
   demoTransfers,
   formatCurrency,
@@ -73,7 +73,7 @@ export function SendFlow({ demoMode = false }: { demoMode?: boolean }) {
     demoRecipients.find((recipient) => recipient.id === selectedRecipientId) ??
     demoRecipients[0];
   const selectedRoute =
-    routeMatrix.find((route) => route.railName === RailName.KITE_NATIVE) ??
+    routeMatrix.find((route) => route.railName === appRailNames.KITE_NATIVE) ??
     routeMatrix[0];
   const successTransfer = demoTransfers[0];
 

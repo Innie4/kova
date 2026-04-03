@@ -1,4 +1,23 @@
-import { RailName, TransferStatus } from "@prisma/client";
+export const appRailNames = {
+  WISE: "WISE",
+  KOTANI: "KOTANI",
+  KITE_NATIVE: "KITE_NATIVE",
+  MOCK: "MOCK",
+} as const;
+
+export type AppRailName = (typeof appRailNames)[keyof typeof appRailNames];
+
+export const appTransferStatuses = {
+  DRAFT: "DRAFT",
+  PREVIEWED: "PREVIEWED",
+  AWAITING_CONFIRMATION: "AWAITING_CONFIRMATION",
+  EXECUTING: "EXECUTING",
+  COMPLETED: "COMPLETED",
+  FAILED: "FAILED",
+} as const;
+
+export type AppTransferStatus =
+  (typeof appTransferStatuses)[keyof typeof appTransferStatuses];
 
 export type DemoRecipient = {
   id: string;
@@ -11,7 +30,7 @@ export type DemoRecipient = {
 };
 
 export type DemoRoute = {
-  railName: RailName;
+  railName: AppRailName;
   label: string;
   feeUsd: number;
   feePercent: number;
@@ -33,9 +52,9 @@ export type DemoTransfer = {
   netDeliveryUsd: number;
   feeUsd: number;
   savedUsd: number;
-  route: RailName;
+  route: AppRailName;
   routeLabel: string;
-  status: TransferStatus;
+  status: AppTransferStatus;
   timestamp: string;
   attestationHash: string;
   attestationUrl: string;
@@ -115,7 +134,7 @@ export const demoRecipients: DemoRecipient[] = [
 
 export const routeMatrix: DemoRoute[] = [
   {
-    railName: RailName.WISE,
+    railName: appRailNames.WISE,
     label: "Wise",
     feeUsd: 4.2,
     feePercent: 2.8,
@@ -126,7 +145,7 @@ export const routeMatrix: DemoRoute[] = [
     reason: "Good FX rate, but slower than the native route.",
   },
   {
-    railName: RailName.KOTANI,
+    railName: appRailNames.KOTANI,
     label: "Kotani Pay",
     feeUsd: 2.1,
     feePercent: 1.4,
@@ -137,7 +156,7 @@ export const routeMatrix: DemoRoute[] = [
     reason: "Fast mobile money corridor for African off-ramp.",
   },
   {
-    railName: RailName.KITE_NATIVE,
+    railName: appRailNames.KITE_NATIVE,
     label: "Kite USDC",
     feeUsd: 0.6,
     feePercent: 0.4,
@@ -148,7 +167,7 @@ export const routeMatrix: DemoRoute[] = [
     reason: "Lowest fee and fastest settlement across the available rails.",
   },
   {
-    railName: RailName.MOCK,
+    railName: appRailNames.MOCK,
     label: "Reserve Demo Rail",
     feeUsd: 3.75,
     feePercent: 2.5,
@@ -172,9 +191,9 @@ export const demoTransfers: DemoTransfer[] = [
     netDeliveryUsd: 149.4,
     feeUsd: 0.6,
     savedUsd: 9.6,
-    route: RailName.KITE_NATIVE,
+    route: appRailNames.KITE_NATIVE,
     routeLabel: "Kite USDC",
-    status: TransferStatus.COMPLETED,
+    status: appTransferStatuses.COMPLETED,
     timestamp: "2026-04-03T09:12:00.000Z",
     attestationHash:
       "0x4da0b8f714ce5f8d7f39d090be5eefb39f745c3d5cfaafb5878b05f3c0e357ca",
@@ -196,9 +215,9 @@ export const demoTransfers: DemoTransfer[] = [
     netDeliveryUsd: 217.9,
     feeUsd: 2.1,
     savedUsd: 6.4,
-    route: RailName.KOTANI,
+    route: appRailNames.KOTANI,
     routeLabel: "Kotani Pay",
-    status: TransferStatus.COMPLETED,
+    status: appTransferStatuses.COMPLETED,
     timestamp: "2026-04-02T17:45:00.000Z",
     attestationHash:
       "0x7e3fb5a29ea3d74afbd58c57443f143e33796d97ef6e0a6c4ca3ce56437dfaab",
@@ -220,9 +239,9 @@ export const demoTransfers: DemoTransfer[] = [
     netDeliveryUsd: 94.4,
     feeUsd: 0.6,
     savedUsd: 4.2,
-    route: RailName.KITE_NATIVE,
+    route: appRailNames.KITE_NATIVE,
     routeLabel: "Kite USDC",
-    status: TransferStatus.COMPLETED,
+    status: appTransferStatuses.COMPLETED,
     timestamp: "2026-04-01T11:15:00.000Z",
     attestationHash:
       "0x0ecc2f15bd8c72745323a173bb1025206739c0c0c72d6613f190da7be1d89903",
@@ -244,9 +263,9 @@ export const demoTransfers: DemoTransfer[] = [
     netDeliveryUsd: 395.8,
     feeUsd: 4.2,
     savedUsd: 0,
-    route: RailName.WISE,
+    route: appRailNames.WISE,
     routeLabel: "Wise",
-    status: TransferStatus.PREVIEWED,
+    status: appTransferStatuses.PREVIEWED,
     timestamp: "2026-03-30T08:20:00.000Z",
     attestationHash:
       "0x51be7f450d4ca2a76ca60ff8de17466eb17fb51c37f3451a03b64535d9cc6241",
@@ -268,9 +287,9 @@ export const demoTransfers: DemoTransfer[] = [
     netDeliveryUsd: 175.5,
     feeUsd: 4.5,
     savedUsd: 0,
-    route: RailName.MOCK,
+    route: appRailNames.MOCK,
     routeLabel: "Reserve Demo Rail",
-    status: TransferStatus.FAILED,
+    status: appTransferStatuses.FAILED,
     timestamp: "2026-03-26T13:50:00.000Z",
     attestationHash:
       "0x29de7ed524f1d49c5fe30832f0f5c81a1e9dfe954601b6ce940f1dc618c2b54d",

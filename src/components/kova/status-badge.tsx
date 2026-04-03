@@ -1,19 +1,19 @@
-import { TransferStatus } from "@prisma/client";
 import { Badge } from "@/components/ui/badge";
+import type { AppTransferStatus } from "@/lib/demo-data";
 import { cn } from "@/lib/utils";
 
-const statusClasses: Record<TransferStatus, string> = {
-  [TransferStatus.DRAFT]:
+const statusClasses: Record<AppTransferStatus, string> = {
+  DRAFT:
     "border-slate-200 bg-slate-100 text-slate-700",
-  [TransferStatus.PREVIEWED]:
+  PREVIEWED:
     "border-amber-200 bg-amber-50 text-amber-700",
-  [TransferStatus.AWAITING_CONFIRMATION]:
+  AWAITING_CONFIRMATION:
     "border-orange-200 bg-orange-50 text-orange-700",
-  [TransferStatus.EXECUTING]:
+  EXECUTING:
     "border-sky-200 bg-sky-50 text-sky-700",
-  [TransferStatus.COMPLETED]:
+  COMPLETED:
     "border-emerald-200 bg-emerald-50 text-emerald-700",
-  [TransferStatus.FAILED]:
+  FAILED:
     "border-rose-200 bg-rose-50 text-rose-700",
 };
 
@@ -21,7 +21,7 @@ export function TransferStatusBadge({
   status,
   className,
 }: {
-  status: TransferStatus;
+  status: AppTransferStatus;
   className?: string;
 }) {
   return (
