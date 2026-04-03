@@ -1,14 +1,5 @@
 import {
-  AgentLogStep,
-  KycStatus,
-  KycDocumentStatus,
-  KycDocumentType,
-  NotificationPreference,
-  NotificationStatus,
-  PreferredMethod,
   PrismaClient,
-  RailName,
-  TransferStatus,
 } from "@prisma/client";
 import {
   demoRecipients,
@@ -23,15 +14,15 @@ const prisma = new PrismaClient();
 function toPreferredMethod(value: (typeof demoRecipients)[number]["method"]) {
   switch (value) {
     case "wallet":
-      return PreferredMethod.WALLET;
+      return "WALLET" as const;
     case "bank":
-      return PreferredMethod.BANK;
+      return "BANK" as const;
     case "mobile_money":
-      return PreferredMethod.MOBILE_MONEY;
+      return "MOBILE_MONEY" as const;
     case "cash":
-      return PreferredMethod.CASH;
+      return "CASH" as const;
     default:
-      return PreferredMethod.WALLET;
+      return "WALLET" as const;
   }
 }
 
@@ -62,9 +53,9 @@ async function main() {
       country: demoUser.country,
       kitePassportAddress: demoUser.passportAddress,
       kitePassportHash: demoUser.passportHash,
-      notificationPreference: NotificationPreference.SMS,
+      notificationPreference: "SMS",
       demoModeEnabled: true,
-      kycStatus: KycStatus.VERIFIED,
+      kycStatus: "VERIFIED",
     },
   });
 
@@ -99,13 +90,13 @@ async function main() {
   await prisma.kycDocument.create({
     data: {
       userId: user.id,
-      documentType: KycDocumentType.PASSPORT,
+      documentType: "PASSPORT",
       frontPath: "seed/kyc/front-passport.png",
       backPath: "seed/kyc/back-passport.png",
       metadataHash:
         "0x6a88022da30338c607ffb2a17a4c9cc67eb0ac55b883c5f714ee26cb79fe5f8d",
       attestationHash: demoTransfers[0]?.attestationHash,
-      status: KycDocumentStatus.VERIFIED,
+      status: "VERIFIED",
     },
   });
 
@@ -133,22 +124,20 @@ async function main() {
         requiresConfirmation: transfer.amountUsd > 500,
         intentRaw: `Send $${transfer.amountUsd} to ${transfer.country}`,
         kiteAttestationHash:
-          transfer.status === TransferStatus.COMPLETED
+          transfer.status === "COMPLETED"
             ? transfer.attestationHash
             : null,
         kiteAttestationUrl:
-          transfer.status === TransferStatus.COMPLETED
+          transfer.status === "COMPLETED"
             ? transfer.attestationUrl
             : null,
         kiteTxHash: transfer.txHash,
         notificationStatus:
-          transfer.status === TransferStatus.COMPLETED
-            ? NotificationStatus.SENT
-            : NotificationStatus.PENDING,
+          transfer.status === "COMPLETED" ? "SENT" : "PENDING",
         railsQueried: routeMatrix,
         createdAt: new Date(transfer.timestamp),
         completedAt:
-          transfer.status === TransferStatus.COMPLETED
+          transfer.status === "COMPLETED"
             ? new Date(transfer.timestamp)
             : null,
       },
@@ -172,7 +161,7 @@ async function main() {
       data: [
         {
           transferId: createdTransfer.id,
-          step: AgentLogStep.INTENT_PARSED,
+          step: "INTENT_PARSED",
           detail: {
             rawText: `Send $${transfer.amountUsd} to ${transfer.country}`,
           },
@@ -180,7 +169,7 @@ async function main() {
         },
         {
           transferId: createdTransfer.id,
-          step: AgentLogStep.RAIL_QUERY_COMPLETED,
+          step: "RAIL_QUERY_COMPLETED",
           detail: {
             railsQueried: routeMatrix.map((route) => route.label),
           },
@@ -188,7 +177,7 @@ async function main() {
         },
         {
           transferId: createdTransfer.id,
-          step: AgentLogStep.ROUTE_SCORED,
+          step: "ROUTE_SCORED",
           detail: {
             selectedRoute: transfer.route,
             reason: transfer.routeReason,
@@ -198,11 +187,9 @@ async function main() {
         {
           transferId: createdTransfer.id,
           step:
-            transfer.status === TransferStatus.FAILED
-              ? AgentLogStep.ERROR
-              : AgentLogStep.TRANSFER_EXECUTED,
+            transfer.status === "FAILED" ? "ERROR" : "TRANSFER_EXECUTED",
           detail:
-            transfer.status === TransferStatus.FAILED
+            transfer.status === "FAILED"
               ? { message: "Seeded sandbox timeout example." }
               : { txHash: transfer.txHash, route: transfer.route },
           createdAt: new Date(transfer.timestamp),
