@@ -185,6 +185,42 @@ export async function sendUSDC(
   };
 }
 
+export async function sendUSDCFromPassport(
+  userId: string,
+  to: string,
+  amount: string | number | bigint,
+): Promise<KiteTransferReceipt> {
+  const config = getKiteConfig();
+  const ownerWallet = derivePassportOwnerWallet(userId).connect(getKiteProvider());
+  const kiteSdk = getKiteSdk();
+  const signFunction = async (userOpHash: string) =>
+    ownerWallet.signMessage(ethers.getBytes(userOpHash));
+  const transferInterface = ethers.Interface.from([
+    "function transfer(address to, uint256 amount)",
+  ]);
+  const value = parseAmountToUnits(amount, config.settlementTokenDecimals);
+  const result = await kiteSdk.sendUserOperationAndWait(
+    ownerWallet.address,
+    {
+      target: config.settlementTokenAddress,
+      value: BigInt(0),
+      callData: transferInterface.encodeFunctionData("transfer", [to, value]),
+    },
+    signFunction,
+  );
+
+  if (result.status.status !== "success" || !result.status.transactionHash) {
+    throw new Error(
+      result.status.reason ?? "Kite passport transfer did not complete successfully.",
+    );
+  }
+
+  return {
+    txHash: result.status.transactionHash,
+    explorerUrl: getKiteExplorerTxUrl(result.status.transactionHash),
+  };
+}
+
 export async function fetchX402PaymentChallenge(): Promise<X402ChallengeResponse> {
   const response = await fetch(getKiteConfig().x402ChallengeUrl, {
     method: "GET",

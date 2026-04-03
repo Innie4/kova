@@ -1,3 +1,4 @@
+import { transferRouter } from "@/server/routers/transfer";
 import { createTRPCRouter, publicProcedure } from "@/server/trpc";
 
 export const appRouter = createTRPCRouter({
@@ -10,6 +11,7 @@ export const appRouter = createTRPCRouter({
     isAuthenticated: Boolean(ctx.session?.user),
     email: ctx.session?.user.email ?? null,
   })),
+  transfer: transferRouter,
 });
 
 export type AppRouter = typeof appRouter;

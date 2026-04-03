@@ -3,7 +3,7 @@
 ## Current Phase
 
 - Active phase: `Phase 4 — Agent Core`
-- Status: `Ready to start`
+- Status: `Completed`
 - Last updated: `2026-04-03`
 
 ## Completed
@@ -36,16 +36,23 @@
 - Connected x402 charging to successful rail-query attempts.
 - Added unit coverage for orchestrator ranking and resilience plus a live Wise sandbox integration test.
 - Re-verified `pnpm lint`, `pnpm test`, `pnpm test:e2e`, and `pnpm build` all pass after the rail phase.
+- Implemented Phase 4 intent parsing in `src/lib/agent/intent-parser.ts` with country inference for corridors, cities, and phone prefixes.
+- Added the transfer preview and execution engine in `src/lib/agent/executor.ts`, including route scoring reuse, AgentLog persistence, confirmation thresholds, wallet balance updates, and Kite attestation publication.
+- Extended the Kite client with AA-based passport transfers through `sendUSDCFromPassport`.
+- Added Twilio notification helpers in `src/lib/notifications/twilio.ts` with demo-mode fallback logging.
+- Exposed the transfer flow over tRPC in `src/server/routers/transfer.ts` and mounted it in the root router.
+- Added Phase 4 unit and integration coverage for intent parsing, executor flow, and attested transfer completion.
+- Re-verified `pnpm lint`, `pnpm test`, `pnpm test:e2e`, and `pnpm build` all pass after the agent-core phase.
 
 ## In Progress
 
-- No active implementation. Phase 3 verification passed and the repo is ready for Phase 4.
+- No active implementation. Phase 4 verification passed and the repo is ready for Phase 5.
 
 ## Next Up
 
-1. Fix any bootstrap verification issues.
-2. Start Phase 4 by implementing intent parsing, transfer execution, and recipient notifications.
-3. Expose the transfer flow over tRPC and persist agent logs through execution.
+1. Start Phase 5 by replacing the remaining placeholder app pages with the full Kova product experience.
+2. Build the authenticated dashboard, send flow, history, wallet, profile, and public attestation viewer.
+3. Connect the new transfer router to the frontend with responsive loading, empty, and success states.
 
 ## Recovery Notes
 
@@ -56,7 +63,7 @@ If work resumes after interruption:
 3. Run `pnpm lint`
 4. Run `pnpm test`
 5. Run `pnpm build`
-6. Continue from the first unchecked Phase 4 item.
+6. Continue from the first unchecked Phase 5 item.
 
 ## Assumptions
 
@@ -69,3 +76,4 @@ If work resumes after interruption:
 - The current public Kite docs do not expose a stable attestation registry contract flow, so attestation writes are presently anchored as self-addressed Kite transactions carrying serialized payload data. This is an implementation inference chosen to keep proofs on-chain with today’s documented primitives.
 - Wise quotes are wired against the current sandbox host `https://api.wise-sandbox.com/v3/quotes`, which returned live sandbox payloads during the integration test in this phase.
 - Kotani integration is keyed to the current sandbox docs host `https://docs.kotanipay.com/` and uses the authenticated `/api/v3/rate/{from}/{to}` exchange-rate endpoint plus corridor pricing assumptions from published market coverage; unsupported or unconfigured corridors degrade cleanly and the mock rail remains available.
+- Phase 4 executes Kite native transfers through AA user operations signed by the deterministic owner wallet derived for each user, while non-native rails currently complete with explicit simulated settlement references because this repo only has quote integrations for those providers at this stage.

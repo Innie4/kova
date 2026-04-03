@@ -20,9 +20,15 @@ export type AttestationPayload = {
 };
 
 export function buildAttestationPayload(
-  transfer: Pick<Transfer, "id" | "routeSelected" | "routeReason" | "amountUsd" | "feeUsd">,
+  transfer: Pick<Transfer, "id" | "routeSelected" | "routeReason"> & {
+    amountUsd: { toString(): string };
+    feeUsd: { toString(): string };
+  },
   railQueries: Array<
-    Pick<RailQuery, "railName" | "feeUsd" | "etaMinutes" | "available" | "rate" | "reason">
+    Pick<RailQuery, "railName" | "etaMinutes" | "available" | "reason"> & {
+      feeUsd: { toString(): string };
+      rate: { toString(): string };
+    }
   >,
 ): AttestationPayload {
   const timestamp = new Date().toISOString();
