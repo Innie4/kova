@@ -5,7 +5,13 @@ type SupabaseConfig = {
   anonKey: string;
 };
 
+type SupabaseAdminConfig = {
+  url: string;
+  serviceRoleKey: string;
+};
+
 let browserClient: SupabaseClient | null = null;
+let adminClient: SupabaseClient | null = null;
 
 export function getSupabaseConfig(): SupabaseConfig | null {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -20,6 +26,21 @@ export function getSupabaseConfig(): SupabaseConfig | null {
 
 export function isSupabaseConfigured(): boolean {
   return getSupabaseConfig() !== null;
+}
+
+export function getSupabaseAdminConfig(): SupabaseAdminConfig | null {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+  if (!url || !serviceRoleKey) {
+    return null;
+  }
+
+  return { url, serviceRoleKey };
+}
+
+export function isSupabaseAdminConfigured(): boolean {
+  return getSupabaseAdminConfig() !== null;
 }
 
 export function createBrowserSupabaseClient(): SupabaseClient {
@@ -46,4 +67,29 @@ export function getBrowserSupabaseClient(): SupabaseClient {
   }
 
   return browserClient;
+}
+
+export function createAdminSupabaseClient(): SupabaseClient {
+  const config = getSupabaseAdminConfig();
+
+  if (!config) {
+    throw new Error(
+      "Supabase admin environment variables are missing. Set NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY.",
+    );
+  }
+
+  return createClient(config.url, config.serviceRoleKey, {
+    auth: {
+      persistSession: false,
+      autoRefreshToken: false,
+    },
+  });
+}
+
+export function getAdminSupabaseClient(): SupabaseClient {
+  if (!adminClient) {
+    adminClient = createAdminSupabaseClient();
+  }
+
+  return adminClient;
 }

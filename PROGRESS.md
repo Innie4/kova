@@ -2,7 +2,7 @@
 
 ## Current Phase
 
-- Active phase: `Phase 6 — API Routes & Integration Layer`
+- Active phase: `Phase 7 — End-to-End Testing & Hardening`
 - Status: `Ready to start`
 - Last updated: `2026-04-03`
 
@@ -48,16 +48,21 @@
 - Added shared frontend primitives and demo-backed product data in `src/components/kova/*` and `src/lib/demo-data.ts`.
 - Added the Phase 5 Playwright coverage in `tests/e2e/onboarding.spec.ts`, `tests/e2e/send-money.spec.ts`, `tests/e2e/history.spec.ts`, `tests/e2e/attestation.spec.ts`, and `tests/e2e/wallet.spec.ts`.
 - Re-verified `pnpm lint`, `pnpm test`, `pnpm test:e2e`, and `pnpm build` all pass after the frontend phase.
+- Added Phase 6 shared server utilities in `src/lib/api/webhooks.ts`, `src/lib/api/wallet.ts`, and `src/lib/api/kyc.ts`.
+- Extended `src/lib/supabase.ts` with admin-client support for secure server-side storage uploads.
+- Implemented the new App Router endpoints under `src/app/api/webhooks/*`, `src/app/api/wallet/*`, and `src/app/api/kyc/*`.
+- Added Phase 6 unit and integration coverage for webhook signature validation, wallet balance formatting, KYC upload validation, and transfer status updates.
+- Re-verified `pnpm lint`, `pnpm test`, `pnpm test:e2e`, and `pnpm build` all pass after the API route phase.
 
 ## In Progress
 
-- No active implementation. Phase 5 verification passed and the repo is ready for Phase 6.
+- No active implementation. Phase 6 verification passed and the repo is ready for Phase 7.
 
 ## Next Up
 
-1. Build the webhook, wallet, and KYC API routes in `src/app/api`.
-2. Connect the new frontend surfaces to live route handlers and persistence instead of the current demo data layer.
-3. Add secure upload, balance, and webhook verification coverage for the new API surface.
+1. Expand the Playwright suite to cover auth, large-transfer confirmation, and the remaining Phase 7 scenarios.
+2. Add database seeding, hardening checks, loading states, metadata, and security/rate-limiting passes.
+3. Prepare `.env.example`, `README.md`, and deployment configuration for the final production-ready sweep.
 
 ## Recovery Notes
 
@@ -68,7 +73,7 @@ If work resumes after interruption:
 3. Run `pnpm lint`
 4. Run `pnpm test`
 5. Run `pnpm build`
-6. Continue from the first unchecked Phase 6 item.
+6. Continue from the first unchecked Phase 7 item.
 
 ## Assumptions
 
@@ -84,3 +89,5 @@ If work resumes after interruption:
 - Phase 4 executes Kite native transfers through AA user operations signed by the deterministic owner wallet derived for each user, while non-native rails currently complete with explicit simulated settlement references because this repo only has quote integrations for those providers at this stage.
 - Phase 5 uses a shared demo data layer to keep the new frontend pages visually and narratively consistent while the live API routes and frontend data fetching are completed in the next phases.
 - Middleware now allows protected routes through in local development or `DEMO_MODE=true` when Supabase credentials are absent, so the frontend can be reviewed and exercised locally without weakening authenticated behavior in configured environments.
+- Phase 6 webhook verification uses HMAC-SHA256 signatures from `WISE_WEBHOOK_SECRET` and `KOTANI_WEBHOOK_SECRET`; if those secrets are unset in local development or demo mode, the handlers allow a controlled bypass so the routes remain testable in this workspace.
+- KYC uploads store to Supabase Storage when `SUPABASE_SERVICE_ROLE_KEY` is configured and fall back to deterministic simulated paths when it is not, while still recording the metadata hash and Kite attestation.
