@@ -1,15 +1,17 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowRight, Copy, ShieldCheck, Sparkles } from "lucide-react";
+import { ArrowRight, Copy, Presentation, ShieldCheck, Sparkles } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { buttonVariants } from "@/components/ui/button-styles";
 import {
+  demoHighlights,
   demoRecipients,
   demoTransfers,
   demoUser,
   formatCurrency,
   formatShortDate,
 } from "@/lib/demo-data";
+import { resolveDemoMode } from "@/lib/demo-mode";
 import { TransferStatusBadge } from "@/components/kova/status-badge";
 import { createPageMetadata } from "@/lib/metadata";
 
@@ -20,9 +22,60 @@ export const metadata: Metadata = createPageMetadata({
   path: "/dashboard",
 });
 
-export default function DashboardPage() {
+export default function DashboardPage({
+  searchParams,
+}: {
+  searchParams?: {
+    demo?: string | string[];
+  };
+}) {
+  const demoMode = resolveDemoMode(searchParams?.demo);
+
   return (
-    <div className="grid gap-6 xl:grid-cols-[0.95fr_1.05fr_0.8fr]">
+    <div className="space-y-6">
+      {demoMode ? (
+        <section className="rounded-[30px] border border-sky-200 bg-[linear-gradient(135deg,#eff8ff_0%,#e8fff1_100%)] p-6 shadow-[0_20px_50px_rgba(15,23,42,0.08)]">
+          <div className="flex flex-wrap items-start justify-between gap-4">
+            <div>
+              <div className="inline-flex items-center gap-2 rounded-full border border-sky-200 bg-white/70 px-3 py-1 text-xs font-semibold uppercase tracking-[0.22em] text-sky-700">
+                <Presentation className="size-3.5" />
+                Demo Mode
+              </div>
+              <h2 className="mt-4 text-3xl font-semibold tracking-tight text-slate-950">
+                The 90-second judge walkthrough is ready.
+              </h2>
+              <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-600">
+                Kova will guide the seeded transfer from funded wallet to public Kite
+                proof with presentation-friendly pacing and the latest savings story.
+              </p>
+            </div>
+            <Link
+              href="/send?demo=1"
+              className={buttonVariants({
+                size: "lg",
+                className: "h-12 rounded-2xl px-6",
+              })}
+            >
+              Start guided demo
+              <ArrowRight className="size-4" />
+            </Link>
+          </div>
+          <div className="mt-6 grid gap-4 md:grid-cols-3">
+            {demoHighlights.map((highlight) => (
+              <div
+                key={highlight.label}
+                className="rounded-[24px] border border-white/70 bg-white/80 p-4"
+              >
+                <p className="text-sm text-slate-500">{highlight.label}</p>
+                <p className="mt-2 text-xl font-semibold text-slate-950">
+                  {highlight.value}
+                </p>
+              </div>
+            ))}
+          </div>
+        </section>
+      ) : null}
+      <div className="grid gap-6 xl:grid-cols-[0.95fr_1.05fr_0.8fr]">
       <Card className="rounded-[30px] border border-white/70 bg-white/85 shadow-[0_20px_50px_rgba(15,23,42,0.08)]">
         <CardHeader className="px-6 pt-6">
           <p className="text-sm uppercase tracking-[0.22em] text-slate-500">
@@ -35,13 +88,13 @@ export default function DashboardPage() {
         <CardContent className="space-y-5 px-6 pb-6">
           <div className="rounded-[24px] border border-slate-200 bg-[linear-gradient(140deg,#07111f_0%,#102546_48%,#0a1831_100%)] p-5 text-white">
             <p className="text-sm text-slate-300">Intent field</p>
-            <p className="mt-3 text-2xl font-semibold">Send $200 to Lagos...</p>
+            <p className="mt-3 text-2xl font-semibold">Send $150 to Nigeria</p>
             <p className="mt-2 text-sm text-slate-300">
               Kova parses the instruction, compares live rails, and keeps the proof.
             </p>
           </div>
           <Link
-            href="/send"
+            href={demoMode ? "/send?demo=1" : "/send"}
             className={buttonVariants({
               size: "lg",
               className: "h-12 w-full rounded-2xl",
@@ -143,12 +196,12 @@ export default function DashboardPage() {
               Add Funds
             </Link>
             <div className="rounded-[24px] border border-emerald-200 bg-emerald-50 p-4">
-              <p className="text-sm text-emerald-700">30-day savings summary</p>
+              <p className="text-sm text-emerald-700">Total savings</p>
               <p className="mt-2 text-2xl font-semibold text-emerald-800">
-                You&apos;ve saved {formatCurrency(demoUser.last30DaySavedUsd)}
+                You&apos;ve saved {formatCurrency(demoUser.totalSavedUsd)}
               </p>
               <p className="mt-2 text-sm text-emerald-700">
-                Versus traditional remittance services.
+                Across the seeded demo transfers versus traditional remittance services.
               </p>
             </div>
             <div className="rounded-[24px] border border-slate-200 bg-slate-50 p-4">
@@ -189,6 +242,7 @@ export default function DashboardPage() {
             </div>
           </CardContent>
         </Card>
+      </div>
       </div>
     </div>
   );

@@ -2,8 +2,8 @@
 
 ## Current Phase
 
-- Active phase: `Phase 8 - Demo Preparation`
-- Status: `Ready to start`
+- Active phase: `Build Complete`
+- Status: `Phase 8 complete`
 - Last updated: `2026-04-03`
 
 ## Completed
@@ -58,16 +58,20 @@
 - Added App Router loading states, metadata helpers, rate limiting for `/api/trpc/[trpc]`, and a shared server-safe button style module.
 - Replaced the bootstrap README with a production-style setup guide, added `.env.example`, and added `vercel.json`.
 - Verified `pnpm lint`, `pnpm test`, `pnpm test:e2e`, and `pnpm build` all pass after the hardening phase.
+- Added Phase 8 demo-mode helpers in `src/lib/demo-mode.ts` and connected the app shell, dashboard, and send flow to a guided presentation mode.
+- Added paced demo automation to `src/components/kova/send-flow.tsx` so the seeded `Send $150 to Nigeria` transfer reveals rails, execution, and proof in sequence.
+- Added the Phase 8 validation coverage in `tests/e2e/demo-mode.spec.ts` and confirmed the guided walkthrough completes in roughly 27 seconds, well under the 90-second target.
+- Re-verified `pnpm lint`, `pnpm test`, `pnpm test:e2e`, and `pnpm build` all pass after the demo phase.
 
 ## In Progress
 
-- No active implementation. Phase 7 is complete and Phase 8 has not started yet.
+- No active implementation. All planned build phases are complete.
 
 ## Next Up
 
-1. Add `DEMO_MODE` behavior that auto-runs the seeded transfer flow with presentation-friendly delays.
-2. Align seeded data and dashboard copy to the final hackathon demo sequence and cumulative savings story.
-3. Validate the full 90-second walkthrough from dashboard to public attestation and history refresh.
+1. Link the repo to a valid Vercel project and rerun `pnpm exec vercel build --yes`.
+2. Populate `.env.local` with live service credentials for a full external integration rehearsal.
+3. Optionally replace the remaining demo-backed dashboard/history reads with live tRPC data.
 
 ## Recovery Notes
 
@@ -79,7 +83,7 @@ If work resumes after interruption:
 4. Run `pnpm test`
 5. Run `pnpm test:e2e`
 6. Run `pnpm build`
-7. Continue from the first unchecked item in Phase 8.
+7. If needed, resolve the external Vercel authentication blocker and perform the final deployment rehearsal.
 
 ## Assumptions
 

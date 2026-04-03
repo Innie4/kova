@@ -62,6 +62,15 @@ pnpm build
 pnpm vercel:build
 ```
 
+## Demo Mode
+
+Set `DEMO_MODE=true` in `.env.local` to enable the guided judge experience.
+
+- Dashboard shows a dedicated guided-demo launch card.
+- `/send` auto-runs the seeded `Send $150 to Nigeria` transfer with paced reveals.
+- Twilio notifications are logged instead of sent when demo mode is active.
+- The public attestation and history flow stay wired to the same seeded story.
+
 ## Kite Integration Guide
 
 Kova keeps Kite integration in `src/lib/kite/*` and `src/lib/config/kite.ts`.

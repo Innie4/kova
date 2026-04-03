@@ -9,6 +9,7 @@ import {
   History,
   LayoutDashboard,
   Menu,
+  Presentation,
   ShieldCheck,
   UserCircle2,
   Wallet2,
@@ -91,9 +92,11 @@ function NavigationList({
 function SidebarContent({
   pathname,
   onNavigate,
+  demoMode,
 }: {
   pathname: string;
   onNavigate?: () => void;
+  demoMode?: boolean;
 }) {
   return (
     <div className="flex h-full flex-col rounded-[28px] bg-[linear-gradient(180deg,#0f274e_0%,#081527_100%)] p-5 text-white shadow-[0_24px_80px_rgba(2,12,27,0.35)]">
@@ -112,6 +115,12 @@ function SidebarContent({
         <p className="mt-2 text-sm text-slate-300">
           Passport reputation {demoUser.reputationScore}/100
         </p>
+        {demoMode ? (
+          <div className="mt-4 flex items-center gap-2 rounded-2xl border border-emerald-300/20 bg-emerald-400/10 px-3 py-2 text-xs uppercase tracking-[0.18em] text-emerald-200">
+            <Presentation className="size-3.5" />
+            Demo mode active
+          </div>
+        ) : null}
       </div>
 
       <div className="mt-8 flex-1">
@@ -138,14 +147,20 @@ function SidebarContent({
   );
 }
 
-export function AppShell({ children }: { children: React.ReactNode }) {
+export function AppShell({
+  children,
+  demoMode = false,
+}: {
+  children: React.ReactNode;
+  demoMode?: boolean;
+}) {
   const pathname = usePathname();
 
   return (
     <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,rgba(12,130,221,0.14),transparent_28%),radial-gradient(circle_at_bottom_right,rgba(61,196,56,0.12),transparent_24%),linear-gradient(180deg,#f7f9fc_0%,#eff4fb_100%)]">
       <div className="mx-auto grid min-h-screen max-w-[1600px] gap-6 p-4 lg:grid-cols-[290px_minmax(0,1fr)] lg:p-6">
         <aside className="hidden lg:block">
-          <SidebarContent pathname={pathname} />
+          <SidebarContent pathname={pathname} demoMode={demoMode} />
         </aside>
 
         <div className="flex min-w-0 flex-col gap-6">
@@ -167,7 +182,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                   <SheetHeader className="sr-only">
                     <SheetTitle>Kova navigation</SheetTitle>
                   </SheetHeader>
-                  <SidebarContent pathname={pathname} />
+                  <SidebarContent pathname={pathname} demoMode={demoMode} />
                 </SheetContent>
               </Sheet>
               <KovaLogo href="/dashboard" />

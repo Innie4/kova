@@ -68,6 +68,21 @@ export const demoUser = {
   totalTransfers: 18,
 };
 
+export const demoHighlights = [
+  {
+    label: "Demo mode",
+    value: "90-second walkthrough",
+  },
+  {
+    label: "Total saved",
+    value: "$47.30",
+  },
+  {
+    label: "Latest winner",
+    value: "Kite USDC at 0.4%",
+  },
+];
+
 export const demoRecipients: DemoRecipient[] = [
   {
     id: "recipient-mum",
@@ -333,6 +348,14 @@ export const transferMilestones = [
     label: "Average delivery",
     value: "6 min",
   },
+];
+
+export const demoWalkthroughSteps = [
+  "Open the dashboard with the funded $1,000.00 wallet.",
+  "Launch the guided transfer for Send $150 to Nigeria.",
+  "Watch Kova reveal the queried rails and auto-select Kite USDC.",
+  "Open the public Kite proof link after settlement completes.",
+  "Finish on history with the latest transfer at the top of the feed.",
 ];
 
 export function formatCurrency(value: number) {

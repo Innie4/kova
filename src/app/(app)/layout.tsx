@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { AppShell } from "@/components/kova/app-shell";
+import { isDemoModeEnabled } from "@/lib/demo-mode";
 import { createPageMetadata } from "@/lib/metadata";
 
 export const metadata: Metadata = createPageMetadata({
@@ -14,5 +15,5 @@ export default function AppLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return <AppShell>{children}</AppShell>;
+  return <AppShell demoMode={isDemoModeEnabled()}>{children}</AppShell>;
 }

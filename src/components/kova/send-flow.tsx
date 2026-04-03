@@ -1,6 +1,6 @@
 "use client";
 
-import { startTransition, useMemo, useState } from "react";
+import { startTransition, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { RailName } from "@prisma/client";
 import {
@@ -9,6 +9,7 @@ import {
   Copy,
   LoaderCircle,
   Sparkles,
+  WandSparkles,
   Wallet2,
 } from "lucide-react";
 import { toast } from "sonner";
@@ -26,6 +27,12 @@ import {
   sendExamples,
   agentExecutionSteps,
 } from "@/lib/demo-data";
+import {
+  DEMO_INTENT,
+  DEMO_PROGRESS_TICK_MS,
+  DEMO_RAIL_REVEAL_MS,
+  DEMO_STEP_DELAY_MS,
+} from "@/lib/demo-mode";
 import { parseTransferIntent } from "@/lib/agent/intent-parser";
 import { cn } from "@/lib/utils";
 
@@ -41,9 +48,9 @@ function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-export function SendFlow() {
+export function SendFlow({ demoMode = false }: { demoMode?: boolean }) {
   const [step, setStep] = useState<SendStep>("intent");
-  const [intentText, setIntentText] = useState("Send $150 to Nigeria");
+  const [intentText, setIntentText] = useState(DEMO_INTENT);
   const [parseError, setParseError] = useState<string | null>(null);
   const [parsedIntent, setParsedIntent] = useState<{
     amount: number;
@@ -57,8 +64,10 @@ export function SendFlow() {
   const [saveRecipient, setSaveRecipient] = useState(true);
   const [isRouting, setIsRouting] = useState(false);
   const [isExecuting, setIsExecuting] = useState(false);
+  const [isDemoRunning, setIsDemoRunning] = useState(false);
   const [routeIndex, setRouteIndex] = useState(0);
   const [executionIndex, setExecutionIndex] = useState(0);
+  const demoStartedRef = useRef(false);
 
   const selectedRecipient =
     demoRecipients.find((recipient) => recipient.id === selectedRecipientId) ??
@@ -73,38 +82,41 @@ export function SendFlow() {
     [routeIndex],
   );
 
-  async function handleParse() {
+  const handleParse = useCallback(async () => {
     setParseError(null);
-    startTransition(() => {
-      try {
-        const parsed = parseTransferIntent(intentText);
-        setParsedIntent(parsed);
-        setStep("recipient");
-        toast.success("Intent parsed. Choose the recipient to continue.");
-      } catch (error) {
-        const message =
-          error instanceof Error ? error.message : "Kova could not parse that request.";
-        setParseError(
-          message,
-        );
-        toast.error(message);
-      }
+    return new Promise<boolean>((resolve) => {
+      startTransition(() => {
+        try {
+          const parsed = parseTransferIntent(intentText);
+          setParsedIntent(parsed);
+          setStep("recipient");
+          toast.success("Intent parsed. Choose the recipient to continue.");
+          resolve(true);
+        } catch (error) {
+          const message =
+            error instanceof Error ? error.message : "Kova could not parse that request.";
+          setParseError(message);
+          toast.error(message);
+          resolve(false);
+        }
+      });
     });
-  }
+  }, [intentText]);
 
-  async function handleRouteQuery() {
+  const handleRouteQuery = useCallback(async () => {
     setStep("routes");
     setIsRouting(true);
     setRouteIndex(1);
+    const routeDelay = demoMode ? DEMO_RAIL_REVEAL_MS : 320;
     for (let index = 2; index <= routeMatrix.length; index += 1) {
-      await sleep(320);
+      await sleep(routeDelay);
       setRouteIndex(index);
     }
     setIsRouting(false);
     toast.success("Kova compared the available rails.");
-  }
+  }, [demoMode]);
 
-  async function handleExecute() {
+  const handleExecute = useCallback(async () => {
     const requiresConfirmation = (parsedIntent?.amount ?? 0) > 500;
     if (requiresConfirmation && step !== "confirm") {
       setStep("confirm");
@@ -114,14 +126,41 @@ export function SendFlow() {
     setStep("executing");
     setIsExecuting(true);
     setExecutionIndex(0);
+    const executionDelay = demoMode ? DEMO_PROGRESS_TICK_MS : 360;
     for (let index = 1; index <= 6; index += 1) {
-      await sleep(360);
+      await sleep(executionDelay);
       setExecutionIndex(index);
     }
     setIsExecuting(false);
     setStep("success");
     toast.success("Transfer completed and attested on Kite Chain.");
-  }
+  }, [demoMode, parsedIntent?.amount, step]);
+
+  useEffect(() => {
+    if (!demoMode || demoStartedRef.current) {
+      return;
+    }
+
+    demoStartedRef.current = true;
+
+    const runDemo = async () => {
+      setIsDemoRunning(true);
+      await sleep(1200);
+      const parsed = await handleParse();
+      if (!parsed) {
+        setIsDemoRunning(false);
+        return;
+      }
+
+      await sleep(DEMO_STEP_DELAY_MS);
+      await handleRouteQuery();
+      await sleep(DEMO_STEP_DELAY_MS);
+      await handleExecute();
+      setIsDemoRunning(false);
+    };
+
+    void runDemo();
+  }, [demoMode, handleExecute, handleParse, handleRouteQuery, intentText]);
 
   return (
     <div className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
@@ -136,17 +175,31 @@ export function SendFlow() {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4 px-6 pb-6">
+            {demoMode ? (
+              <div className="rounded-[24px] border border-emerald-200 bg-emerald-50 px-5 py-4 text-sm leading-6 text-emerald-800">
+                <div className="flex items-center gap-2 font-semibold">
+                  <WandSparkles className="size-4" />
+                  Guided demo
+                </div>
+                <p className="mt-2">
+                  Kova is auto-running the seeded transfer with 2-second pauses
+                  between each visible phase.
+                </p>
+              </div>
+            ) : null}
             <Textarea
               value={intentText}
               onChange={(event) => setIntentText(event.target.value)}
               className="min-h-[140px] rounded-[24px] border-slate-200 bg-slate-50 px-5 py-4 text-base"
               placeholder="Send $200 to Lagos..."
+              readOnly={demoMode && isDemoRunning}
             />
             <div className="flex flex-wrap gap-2">
               {sendExamples.map((example) => (
                 <button
                   key={example}
                   onClick={() => setIntentText(example)}
+                  disabled={demoMode && isDemoRunning}
                   className="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm text-slate-600 transition hover:border-slate-300 hover:text-slate-900"
                 >
                   {example}
@@ -168,6 +221,7 @@ export function SendFlow() {
               size="lg"
               className="h-12 rounded-2xl px-5"
               onClick={handleParse}
+              disabled={demoMode && isDemoRunning}
             >
               Parse intent
               <ArrowRight className="size-4" />
@@ -244,6 +298,7 @@ export function SendFlow() {
                 size="lg"
                 className="h-12 rounded-2xl px-5"
                 onClick={handleRouteQuery}
+                disabled={demoMode && isDemoRunning}
               >
                 Let Kova compare rails
                 <Sparkles className="size-4" />
@@ -366,6 +421,7 @@ export function SendFlow() {
                       size="lg"
                       className="h-12 rounded-2xl px-5"
                       onClick={handleExecute}
+                      disabled={demoMode && isDemoRunning}
                     >
                       Proceed with agent choice
                       <ArrowRight className="size-4" />
@@ -476,8 +532,8 @@ export function SendFlow() {
                 {selectedRecipient.name}
               </h2>
               <p className="mt-3 text-sm leading-6 text-slate-600">
-                You saved {formatCurrency(successTransfer.savedUsd)} versus a
-                traditional remittance provider.
+                You saved {formatCurrency(successTransfer.savedUsd)} vs Western Union
+                and kept the full route rationale on Kite Chain.
               </p>
               <div className="mt-6 flex flex-wrap gap-3">
                 <Link
