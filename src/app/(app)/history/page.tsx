@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
+import { unstable_noStore as noStore } from "next/cache";
 import { HistoryTable } from "@/components/kova/history-table";
+import { getHistorySnapshot } from "@/lib/api/app-state";
 import { AppSectionLoading } from "@/components/kova/page-loading";
 import { createPageMetadata } from "@/lib/metadata";
 
@@ -11,7 +13,10 @@ export const metadata: Metadata = createPageMetadata({
   path: "/history",
 });
 
-export default function HistoryPage() {
+export default async function HistoryPage() {
+  noStore();
+  const snapshot = await getHistorySnapshot();
+
   return (
     <div className="space-y-6">
       <section className="rounded-[30px] border border-white/70 bg-white/85 p-6 shadow-[0_20px_50px_rgba(15,23,42,0.08)]">
@@ -27,7 +32,7 @@ export default function HistoryPage() {
         </p>
       </section>
       <Suspense fallback={<AppSectionLoading cards={2} />}>
-        <HistoryTable />
+        <HistoryTable transfers={snapshot.transfers} />
       </Suspense>
     </div>
   );

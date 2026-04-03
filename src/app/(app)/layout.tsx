@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { AppShell } from "@/components/kova/app-shell";
+import { getDashboardSnapshot } from "@/lib/api/app-state";
 import { isDemoModeEnabled } from "@/lib/demo-mode";
 import { createPageMetadata } from "@/lib/metadata";
 
@@ -10,10 +11,16 @@ export const metadata: Metadata = createPageMetadata({
   path: "/dashboard",
 });
 
-export default function AppLayout({
+export default async function AppLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return <AppShell demoMode={isDemoModeEnabled()}>{children}</AppShell>;
+  const snapshot = await getDashboardSnapshot();
+
+  return (
+    <AppShell demoMode={isDemoModeEnabled()} user={snapshot.user}>
+      {children}
+    </AppShell>
+  );
 }

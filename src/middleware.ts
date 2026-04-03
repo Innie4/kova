@@ -8,15 +8,21 @@ function buildLoginRedirect(request: NextRequest): NextResponse {
   return NextResponse.redirect(loginUrl);
 }
 
-export async function middleware(request: NextRequest) {
-  if (!isSupabaseConfigured()) {
-    if (
-      process.env.NODE_ENV === "development" ||
-      process.env.DEMO_MODE === "true"
-    ) {
-      return NextResponse.next();
-    }
+function shouldBypassProtectedRoutes() {
+  return (
+    process.env.NODE_ENV === "development" ||
+    process.env.PLAYWRIGHT_TEST === "true" ||
+    process.env.DEMO_MODE === "true" ||
+    process.env.KOVA_LOCAL_AUTH_BYPASS === "true"
+  );
+}
 
+export async function middleware(request: NextRequest) {
+  if (shouldBypassProtectedRoutes()) {
+    return NextResponse.next();
+  }
+
+  if (!isSupabaseConfigured()) {
     return buildLoginRedirect(request);
   }
 

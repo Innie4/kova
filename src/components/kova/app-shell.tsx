@@ -23,7 +23,8 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { demoUser, formatCurrency } from "@/lib/demo-data";
+import type { DashboardSnapshot } from "@/lib/api/app-state";
+import { formatCurrency } from "@/lib/demo-data";
 import { cn } from "@/lib/utils";
 import { KovaLogo } from "@/components/kova/logo";
 
@@ -93,10 +94,12 @@ function SidebarContent({
   pathname,
   onNavigate,
   demoMode,
+  user,
 }: {
   pathname: string;
   onNavigate?: () => void;
   demoMode?: boolean;
+  user: DashboardSnapshot["user"];
 }) {
   return (
     <div className="flex h-full flex-col rounded-[28px] bg-[linear-gradient(180deg,#0f274e_0%,#081527_100%)] p-5 text-white shadow-[0_24px_80px_rgba(2,12,27,0.35)]">
@@ -111,9 +114,9 @@ function SidebarContent({
         <p className="text-[11px] uppercase tracking-[0.22em] text-slate-400">
           Current wallet
         </p>
-        <p className="mt-3 text-3xl font-semibold">{formatCurrency(demoUser.balanceUsd)}</p>
+        <p className="mt-3 text-3xl font-semibold">{formatCurrency(user.balanceUsd)}</p>
         <p className="mt-2 text-sm text-slate-300">
-          Passport reputation {demoUser.reputationScore}/100
+          Passport reputation {user.reputationScore}/100
         </p>
         {demoMode ? (
           <div className="mt-4 flex items-center gap-2 rounded-2xl border border-emerald-300/20 bg-emerald-400/10 px-3 py-2 text-xs uppercase tracking-[0.18em] text-emerald-200">
@@ -150,17 +153,19 @@ function SidebarContent({
 export function AppShell({
   children,
   demoMode = false,
+  user,
 }: {
   children: React.ReactNode;
   demoMode?: boolean;
+  user: DashboardSnapshot["user"];
 }) {
-  const pathname = usePathname();
+  const pathname = usePathname() ?? "/dashboard";
 
   return (
     <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,rgba(12,130,221,0.14),transparent_28%),radial-gradient(circle_at_bottom_right,rgba(61,196,56,0.12),transparent_24%),linear-gradient(180deg,#f7f9fc_0%,#eff4fb_100%)]">
       <div className="mx-auto grid min-h-screen max-w-[1600px] gap-6 p-4 lg:grid-cols-[290px_minmax(0,1fr)] lg:p-6">
         <aside className="hidden lg:block">
-          <SidebarContent pathname={pathname} demoMode={demoMode} />
+          <SidebarContent pathname={pathname} demoMode={demoMode} user={user} />
         </aside>
 
         <div className="flex min-w-0 flex-col gap-6">
@@ -182,7 +187,11 @@ export function AppShell({
                   <SheetHeader className="sr-only">
                     <SheetTitle>Kova navigation</SheetTitle>
                   </SheetHeader>
-                  <SidebarContent pathname={pathname} demoMode={demoMode} />
+                  <SidebarContent
+                    pathname={pathname}
+                    demoMode={demoMode}
+                    user={user}
+                  />
                 </SheetContent>
               </Sheet>
               <KovaLogo href="/dashboard" />
@@ -199,7 +208,7 @@ export function AppShell({
 
             <div className="flex items-center gap-3">
               <div className="hidden rounded-full border border-sky-200 bg-sky-50 px-4 py-2 text-sm font-medium text-sky-700 sm:block">
-                Balance {formatCurrency(demoUser.balanceUsd)}
+                Balance {formatCurrency(user.balanceUsd)}
               </div>
               <button className="rounded-full border border-slate-200 bg-white p-2 text-slate-500 transition hover:border-slate-300 hover:text-slate-700">
                 <Bell className="size-4" />
@@ -207,11 +216,16 @@ export function AppShell({
               <div className="flex items-center gap-3 rounded-full border border-slate-200 bg-white px-3 py-2">
                 <Avatar className="size-9 rounded-full bg-[linear-gradient(135deg,#0C82DD,#3DC438)] p-[1px]">
                   <AvatarFallback className="bg-slate-950 text-sm font-semibold text-white">
-                    IA
+                    {user.name
+                      .split(" ")
+                      .map((value) => value[0])
+                      .join("")
+                      .slice(0, 2)
+                      .toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
                 <div className="hidden text-left sm:block">
-                  <p className="text-sm font-semibold text-slate-950">{demoUser.name}</p>
+                  <p className="text-sm font-semibold text-slate-950">{user.name}</p>
                   <p className="text-xs text-slate-500">Kova operator</p>
                 </div>
               </div>

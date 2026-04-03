@@ -10,7 +10,7 @@ import { KovaLogo } from "@/components/kova/logo";
 
 export default function VerifyPage() {
   const searchParams = useSearchParams();
-  const email = searchParams.get("email");
+  const email = searchParams?.get("email");
   const [cooldown, setCooldown] = useState(60);
 
   useEffect(() => {

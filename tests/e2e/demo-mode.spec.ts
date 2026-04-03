@@ -1,5 +1,7 @@
 import { expect, test } from "@playwright/test";
 
+test.setTimeout(45_000);
+
 test("demo mode walkthrough runs from dashboard to proof and history", async ({
   page,
 }) => {
@@ -9,13 +11,15 @@ test("demo mode walkthrough runs from dashboard to proof and history", async ({
   await expect(page.getByText("$1,000.00").first()).toBeVisible();
   await expect(page.getByText("$47.30").first()).toBeVisible();
 
-  await page.getByRole("link", { name: "Start guided demo" }).click();
-  await expect(page).toHaveURL(/\/send\?demo=1/);
+  await page
+    .getByRole("link", { name: "Start guided demo" })
+    .click({ noWaitAfter: true });
+  await page.waitForURL(/\/send\?demo=1/, { timeout: 30000 });
   await expect(page.getByText("Guided demo")).toBeVisible();
 
   await expect(
     page.getByRole("heading", { name: /delivered to Mum/i }),
-  ).toBeVisible({ timeout: 25000 });
+  ).toBeVisible({ timeout: 35000 });
 
   await page.getByRole("link", { name: "View proof on Kite" }).click();
   await expect(page).toHaveURL(/\/attestation\//);

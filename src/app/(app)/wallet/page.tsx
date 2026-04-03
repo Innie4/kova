@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
+import { unstable_noStore as noStore } from "next/cache";
 import { ArrowDownLeft, ArrowUpRight, QrCode, ShieldCheck } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { demoUser, formatCurrency, formatShortDate, walletActivity } from "@/lib/demo-data";
+import { getWalletSnapshot } from "@/lib/api/app-state";
+import { formatCurrency, formatShortDate } from "@/lib/demo-data";
 import { createPageMetadata } from "@/lib/metadata";
 
 export const metadata: Metadata = createPageMetadata({
@@ -11,7 +13,11 @@ export const metadata: Metadata = createPageMetadata({
   path: "/wallet",
 });
 
-export default function WalletPage() {
+export default async function WalletPage() {
+  noStore();
+  const snapshot = await getWalletSnapshot();
+  const { activities, user } = snapshot;
+
   return (
     <div className="grid gap-6 xl:grid-cols-[0.95fr_1.05fr]">
       <div className="space-y-6">
@@ -21,7 +27,7 @@ export default function WalletPage() {
               USDC balance
             </p>
             <CardTitle className="mt-2 text-4xl font-semibold tracking-tight text-slate-950">
-              {formatCurrency(demoUser.balanceUsd)}
+              {formatCurrency(user.balanceUsd)}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4 px-6 pb-6">
@@ -29,7 +35,7 @@ export default function WalletPage() {
               <p className="text-sm uppercase tracking-[0.18em] text-slate-300">
                 Deposit address
               </p>
-              <p className="mt-3 font-semibold">{demoUser.passportAddress}</p>
+              <p className="mt-3 font-semibold">{user.passportAddress}</p>
               <div className="mt-5 flex h-40 items-center justify-center rounded-[24px] border border-dashed border-white/15 bg-white/5">
                 <div className="text-center">
                   <QrCode className="mx-auto size-10 text-sky-300" />
@@ -55,26 +61,26 @@ export default function WalletPage() {
             <div className="rounded-[24px] border border-slate-200 bg-slate-50 p-4">
               <p className="text-sm text-slate-500">Address</p>
               <p className="mt-2 font-semibold text-slate-950">
-                {demoUser.passportAddress.slice(0, 8)}...
-                {demoUser.passportAddress.slice(-4)}
+                {user.passportAddress.slice(0, 8)}...
+                {user.passportAddress.slice(-4)}
               </p>
             </div>
             <div className="rounded-[24px] border border-slate-200 bg-slate-50 p-4">
               <p className="text-sm text-slate-500">Reputation score</p>
               <p className="mt-2 text-2xl font-semibold text-slate-950">
-                {demoUser.reputationScore}/100
+                {user.reputationScore}/100
               </p>
             </div>
             <div className="rounded-[24px] border border-slate-200 bg-slate-50 p-4">
               <p className="text-sm text-slate-500">Total transfers</p>
               <p className="mt-2 text-2xl font-semibold text-slate-950">
-                {demoUser.totalTransfers}
+                {user.totalTransfers}
               </p>
             </div>
             <div className="rounded-[24px] border border-slate-200 bg-slate-50 p-4">
               <p className="text-sm text-slate-500">Total fees saved</p>
               <p className="mt-2 text-2xl font-semibold text-emerald-600">
-                {formatCurrency(demoUser.totalSavedUsd)}
+                {formatCurrency(user.totalSavedUsd)}
               </p>
             </div>
           </CardContent>
@@ -91,7 +97,7 @@ export default function WalletPage() {
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-3 px-6 pb-6">
-          {walletActivity.map((activity) => (
+          {activities.map((activity) => (
             <div
               key={activity.id}
               className="flex items-center justify-between gap-4 rounded-[24px] border border-slate-200 bg-slate-50 p-4"
@@ -120,7 +126,8 @@ export default function WalletPage() {
           <div className="rounded-[24px] border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-700">
             <div className="flex items-center gap-3">
               <ShieldCheck className="size-4" />
-              Every completed transfer updates the wallet summary and can be linked back to a Kite attestation.
+              Every completed transfer updates the wallet summary and can be
+              linked back to a Kite attestation.
             </div>
           </div>
         </CardContent>

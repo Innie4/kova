@@ -4,6 +4,7 @@ import { Fragment, useMemo, useState } from "react";
 import Link from "next/link";
 import { TransferStatus } from "@prisma/client";
 import { ChevronDown, ChevronUp, Download, ShieldCheck } from "lucide-react";
+import { TransferStatusBadge } from "@/components/kova/status-badge";
 import { buttonVariants } from "@/components/ui/button";
 import {
   Table,
@@ -13,8 +14,12 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { demoTransfers, formatCurrency, formatShortDate, type DemoTransfer } from "@/lib/demo-data";
-import { TransferStatusBadge } from "@/components/kova/status-badge";
+import {
+  demoTransfers,
+  formatCurrency,
+  formatShortDate,
+  type DemoTransfer,
+} from "@/lib/demo-data";
 import { cn } from "@/lib/utils";
 
 const filters: Array<{ label: string; value: "ALL" | TransferStatus }> = [
@@ -41,18 +46,24 @@ function buildCsv(transfers: DemoTransfer[]) {
   return rows.map((row) => row.join(",")).join("\n");
 }
 
-export function HistoryTable() {
-  const [selectedFilter, setSelectedFilter] = useState<"ALL" | TransferStatus>("ALL");
+export function HistoryTable({
+  transfers = demoTransfers,
+}: {
+  transfers?: DemoTransfer[];
+}) {
+  const [selectedFilter, setSelectedFilter] = useState<"ALL" | TransferStatus>(
+    "ALL",
+  );
   const [expandedTransferId, setExpandedTransferId] = useState<string | null>(
-    demoTransfers[0]?.id ?? null,
+    transfers[0]?.id ?? null,
   );
 
   const visibleTransfers = useMemo(
     () =>
-      demoTransfers.filter((transfer) =>
+      transfers.filter((transfer) =>
         selectedFilter === "ALL" ? true : transfer.status === selectedFilter,
       ),
-    [selectedFilter],
+    [selectedFilter, transfers],
   );
 
   const csvHref = useMemo(() => {
@@ -112,7 +123,7 @@ export function HistoryTable() {
 
               return (
                 <Fragment key={transfer.id}>
-                  <TableRow key={transfer.id}>
+                  <TableRow>
                     <TableCell className="text-slate-600">
                       {formatShortDate(transfer.timestamp)}
                     </TableCell>
@@ -162,7 +173,7 @@ export function HistoryTable() {
                     </TableCell>
                   </TableRow>
                   {expanded ? (
-                    <TableRow key={`${transfer.id}-expanded`} className="bg-slate-50/70">
+                    <TableRow className="bg-slate-50/70">
                       <TableCell colSpan={7} className="p-4">
                         <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
                           {transfer.railsQueried.map((route) => (

@@ -9,8 +9,11 @@ test("user can request a magic link and land on verify state", async ({
   await Promise.all([
     page.waitForURL(/\/auth\/verify\?email=judge%40kova\.app/, {
       timeout: 30000,
+      waitUntil: "domcontentloaded",
     }),
-    page.getByRole("button", { name: "Send Magic Link" }).click(),
+    page.getByRole("button", { name: "Send Magic Link" }).click({
+      noWaitAfter: true,
+    }),
   ]);
 
   await expect(
