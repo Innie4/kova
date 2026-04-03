@@ -10,6 +10,13 @@ function buildLoginRedirect(request: NextRequest): NextResponse {
 
 export async function middleware(request: NextRequest) {
   if (!isSupabaseConfigured()) {
+    if (
+      process.env.NODE_ENV === "development" ||
+      process.env.DEMO_MODE === "true"
+    ) {
+      return NextResponse.next();
+    }
+
     return buildLoginRedirect(request);
   }
 
@@ -45,5 +52,12 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/send", "/history", "/profile"],
+  matcher: [
+    "/dashboard/:path*",
+    "/send",
+    "/history",
+    "/profile",
+    "/wallet",
+    "/onboarding/:path*",
+  ],
 };

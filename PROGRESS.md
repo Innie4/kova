@@ -2,8 +2,8 @@
 
 ## Current Phase
 
-- Active phase: `Phase 4 — Agent Core`
-- Status: `Completed`
+- Active phase: `Phase 6 — API Routes & Integration Layer`
+- Status: `Ready to start`
 - Last updated: `2026-04-03`
 
 ## Completed
@@ -43,16 +43,21 @@
 - Exposed the transfer flow over tRPC in `src/server/routers/transfer.ts` and mounted it in the root router.
 - Added Phase 4 unit and integration coverage for intent parsing, executor flow, and attested transfer completion.
 - Re-verified `pnpm lint`, `pnpm test`, `pnpm test:e2e`, and `pnpm build` all pass after the agent-core phase.
+- Implemented the Phase 5 frontend shell in `src/components/kova/app-shell.tsx` with a dark navy sidebar, mobile sheet navigation, and a balance-aware top bar.
+- Replaced the placeholder landing, auth, dashboard, send, history, wallet, onboarding, profile, and attestation pages with the Kova MVP experience.
+- Added shared frontend primitives and demo-backed product data in `src/components/kova/*` and `src/lib/demo-data.ts`.
+- Added the Phase 5 Playwright coverage in `tests/e2e/onboarding.spec.ts`, `tests/e2e/send-money.spec.ts`, `tests/e2e/history.spec.ts`, `tests/e2e/attestation.spec.ts`, and `tests/e2e/wallet.spec.ts`.
+- Re-verified `pnpm lint`, `pnpm test`, `pnpm test:e2e`, and `pnpm build` all pass after the frontend phase.
 
 ## In Progress
 
-- No active implementation. Phase 4 verification passed and the repo is ready for Phase 5.
+- No active implementation. Phase 5 verification passed and the repo is ready for Phase 6.
 
 ## Next Up
 
-1. Start Phase 5 by replacing the remaining placeholder app pages with the full Kova product experience.
-2. Build the authenticated dashboard, send flow, history, wallet, profile, and public attestation viewer.
-3. Connect the new transfer router to the frontend with responsive loading, empty, and success states.
+1. Build the webhook, wallet, and KYC API routes in `src/app/api`.
+2. Connect the new frontend surfaces to live route handlers and persistence instead of the current demo data layer.
+3. Add secure upload, balance, and webhook verification coverage for the new API surface.
 
 ## Recovery Notes
 
@@ -63,7 +68,7 @@ If work resumes after interruption:
 3. Run `pnpm lint`
 4. Run `pnpm test`
 5. Run `pnpm build`
-6. Continue from the first unchecked Phase 5 item.
+6. Continue from the first unchecked Phase 6 item.
 
 ## Assumptions
 
@@ -77,3 +82,5 @@ If work resumes after interruption:
 - Wise quotes are wired against the current sandbox host `https://api.wise-sandbox.com/v3/quotes`, which returned live sandbox payloads during the integration test in this phase.
 - Kotani integration is keyed to the current sandbox docs host `https://docs.kotanipay.com/` and uses the authenticated `/api/v3/rate/{from}/{to}` exchange-rate endpoint plus corridor pricing assumptions from published market coverage; unsupported or unconfigured corridors degrade cleanly and the mock rail remains available.
 - Phase 4 executes Kite native transfers through AA user operations signed by the deterministic owner wallet derived for each user, while non-native rails currently complete with explicit simulated settlement references because this repo only has quote integrations for those providers at this stage.
+- Phase 5 uses a shared demo data layer to keep the new frontend pages visually and narratively consistent while the live API routes and frontend data fetching are completed in the next phases.
+- Middleware now allows protected routes through in local development or `DEMO_MODE=true` when Supabase credentials are absent, so the frontend can be reviewed and exercised locally without weakening authenticated behavior in configured environments.

@@ -1,130 +1,121 @@
-import Image from "next/image";
-
-const phases = [
-  {
-    title: "Phase 0",
-    description: "Bootstrap, planning docs, branding, and the initial build scaffold.",
-    status: "In progress",
-  },
-  {
-    title: "Phase 1",
-    description: "Prisma, Supabase auth, and the tRPC foundation for protected workflows.",
-    status: "Queued",
-  },
-  {
-    title: "Phase 2",
-    description: "Kite AA, x402 charging, attestations, and gasless transfer plumbing.",
-    status: "Queued",
-  },
-];
+import Link from "next/link";
+import { ArrowRight, ShieldCheck, Sparkles } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { KovaLogo } from "@/components/kova/logo";
+import { routeMatrix, transferMilestones } from "@/lib/demo-data";
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-[radial-gradient(circle_at_top,_rgba(12,130,221,0.18),_transparent_38%),linear-gradient(180deg,_#f7fbff_0%,_#eef6ff_100%)] px-6 py-10 sm:px-10 lg:px-16">
-      <div className="mx-auto flex max-w-6xl flex-col gap-8">
-        <div className="flex items-center justify-between rounded-full border border-white/60 bg-white/70 px-5 py-3 shadow-[0_16px_40px_rgba(15,23,42,0.08)] backdrop-blur">
+    <main className="min-h-screen bg-[radial-gradient(circle_at_top_left,rgba(12,130,221,0.18),transparent_28%),radial-gradient(circle_at_bottom_right,rgba(61,196,56,0.14),transparent_20%),linear-gradient(180deg,#f8fbff_0%,#eef4fb_100%)] px-6 py-8 sm:px-10 lg:px-16">
+      <div className="mx-auto max-w-7xl">
+        <header className="flex items-center justify-between rounded-full border border-white/70 bg-white/80 px-5 py-3 shadow-[0_16px_40px_rgba(15,23,42,0.08)] backdrop-blur">
+          <KovaLogo href="/" />
           <div className="flex items-center gap-3">
-            <Image
-              src="/brand/kova-logo.png"
-              alt="Kova logo"
-              width={118}
-              height={42}
-              priority
-            />
-            <span className="hidden text-sm text-slate-500 sm:inline">
-              Autonomous remittance agent on Kite Chain
-            </span>
+            <Button variant="ghost" className="rounded-full px-5" render={<Link href="/auth/login" />}>
+              Sign in
+            </Button>
+            <Button className="rounded-full px-5" render={<Link href="/dashboard" />}>
+              Open demo
+            </Button>
           </div>
-          <div className="rounded-full bg-slate-950 px-3 py-1 text-xs font-medium text-white">
-            Bootstrap mode
-          </div>
-        </div>
+        </header>
 
-        <section className="grid gap-6 lg:grid-cols-[1.3fr_0.7fr]">
-          <div className="rounded-[2rem] border border-white/70 bg-white/80 p-8 shadow-[0_24px_80px_rgba(15,23,42,0.10)] backdrop-blur">
-            <div className="mb-5 inline-flex items-center rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-semibold uppercase tracking-[0.24em] text-emerald-700">
-              Kova build in progress
+        <section className="grid gap-8 py-12 lg:grid-cols-[1.05fr_0.95fr] lg:py-20">
+          <div>
+            <div className="inline-flex items-center gap-2 rounded-full border border-sky-200 bg-sky-50 px-4 py-2 text-xs font-semibold uppercase tracking-[0.22em] text-sky-700">
+              <Sparkles className="size-3.5" />
+              Autonomous remittance agent
             </div>
-            <h1 className="max-w-3xl text-4xl font-semibold tracking-tight text-slate-950 sm:text-5xl">
-              Borderless transfers, agent-first routing, and proof on Kite Chain.
+            <h1 className="mt-8 max-w-4xl text-5xl font-semibold tracking-tight text-slate-950 sm:text-6xl">
+              Kova finds the best rail, moves the money, and proves why.
             </h1>
-            <p className="mt-5 max-w-2xl text-base leading-7 text-slate-600 sm:text-lg">
-              This repository is being built from the PRD as a production-minded MVP for
-              autonomous remittance. The product name is <strong>Kova</strong>, and the
-              original RemitAgent specification is being implemented under this brand.
+            <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-600">
+              Built for real families and real operators. Type a transfer the way you
+              naturally speak, let Kova compare rails in parallel, and share the Kite
+              Chain proof trail afterward.
             </p>
-            <div className="mt-8 flex flex-wrap gap-3 text-sm font-semibold">
-              <span className="rounded-full bg-[#0C82DD] px-5 py-3 text-white">
-                PLAN.md ready
-              </span>
-              <span className="rounded-full border border-slate-200 bg-white px-5 py-3 text-slate-700">
-                PROGRESS.md ready
-              </span>
+            <div className="mt-8 flex flex-wrap gap-3">
+              <Button size="lg" className="h-12 rounded-full px-6" render={<Link href="/auth/login" />}>
+                Start with magic link
+                <ArrowRight className="size-4" />
+              </Button>
+              <Button
+                variant="outline"
+                size="lg"
+                className="h-12 rounded-full px-6"
+                render={<Link href="/attestation/0x4da0b8f714ce5f8d7f39d090be5eefb39f745c3d5cfaafb5878b05f3c0e357ca" />}
+              >
+                View sample proof
+              </Button>
+            </div>
+            <div className="mt-10 grid gap-4 sm:grid-cols-3">
+              {transferMilestones.map((milestone) => (
+                <div
+                  key={milestone.label}
+                  className="rounded-[28px] border border-white/70 bg-white/75 p-5 shadow-[0_18px_50px_rgba(15,23,42,0.06)]"
+                >
+                  <p className="text-sm text-slate-500">{milestone.label}</p>
+                  <p className="mt-3 text-3xl font-semibold text-slate-950">
+                    {milestone.value}
+                  </p>
+                </div>
+              ))}
             </div>
           </div>
 
-          <div className="rounded-[2rem] border border-slate-200 bg-slate-950 p-8 text-white shadow-[0_24px_80px_rgba(15,23,42,0.22)]">
-            <p className="text-sm uppercase tracking-[0.24em] text-slate-400">North star</p>
-            <div className="mt-6 space-y-4">
-              <div>
-                <p className="text-4xl font-semibold">$59B</p>
-                <p className="mt-1 text-sm text-slate-300">
-                  Annual remittance fees the product is designed to reduce.
+          <div className="relative">
+            <div className="absolute -left-8 top-16 hidden h-40 w-40 rounded-full bg-sky-200/40 blur-3xl lg:block" />
+            <div className="absolute -bottom-8 right-0 hidden h-40 w-40 rounded-full bg-emerald-200/50 blur-3xl lg:block" />
+            <div className="relative overflow-hidden rounded-[36px] border border-slate-200 bg-[linear-gradient(145deg,#07111f_0%,#11284f_44%,#0a1831_100%)] p-6 text-white shadow-[0_30px_90px_rgba(3,12,31,0.34)]">
+              <div className="rounded-[28px] border border-white/10 bg-white/10 p-5 backdrop-blur">
+                <p className="text-sm uppercase tracking-[0.2em] text-slate-300">
+                  Agent feed
                 </p>
+                <div className="mt-4 space-y-3">
+                  {[
+                    "Intent parsed: Send $150 to Nigeria",
+                    "Wise quote received",
+                    "Kotani quote received",
+                    "Kite native quote received",
+                    "Best route selected: Kite USDC",
+                  ].map((event, index) => (
+                    <div
+                      key={event}
+                      className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-slate-100"
+                    >
+                      <span className="mr-3 font-mono text-xs text-sky-300">
+                        0{index + 1}
+                      </span>
+                      {event}
+                    </div>
+                  ))}
+                </div>
               </div>
-              <div className="h-px bg-white/10" />
-              <div>
-                <p className="text-4xl font-semibold">&lt; 8s</p>
-                <p className="mt-1 text-sm text-slate-300">
-                  Target decision window for parallel rail discovery and scoring.
-                </p>
+              <div className="mt-5 grid gap-3">
+                {routeMatrix.map((route) => (
+                  <div
+                    key={route.railName}
+                    className="grid grid-cols-[1.3fr_0.9fr_0.9fr] items-center rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm"
+                  >
+                    <div className="font-semibold">{route.label}</div>
+                    <div className="text-slate-300">${route.feeUsd.toFixed(2)}</div>
+                    <div className="text-right text-slate-300">{route.eta}</div>
+                  </div>
+                ))}
               </div>
-              <div className="h-px bg-white/10" />
-              <div>
-                <p className="text-4xl font-semibold">3+</p>
-                <p className="mt-1 text-sm text-slate-300">
-                  Live rails queried in parallel per transfer, with on-chain evidence.
-                </p>
+              <div className="mt-5 rounded-[28px] border border-emerald-300/20 bg-emerald-400/10 p-5">
+                <div className="flex items-center gap-3">
+                  <ShieldCheck className="size-5 text-emerald-300" />
+                  <div>
+                    <p className="font-semibold text-white">
+                      Proof layer included by default
+                    </p>
+                    <p className="mt-1 text-sm text-slate-300">
+                      Every transfer decision is written to Kite Chain as an attestation.
+                    </p>
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
-        </section>
-
-        <section className="grid gap-4 lg:grid-cols-3">
-          {phases.map((phase) => (
-            <article
-              key={phase.title}
-              className="rounded-[1.5rem] border border-white/70 bg-white/80 p-6 shadow-[0_18px_60px_rgba(15,23,42,0.08)]"
-            >
-              <div className="flex items-center justify-between">
-                <h2 className="text-lg font-semibold text-slate-950">{phase.title}</h2>
-                <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-700">
-                  {phase.status}
-                </span>
-              </div>
-              <p className="mt-4 text-sm leading-6 text-slate-600">{phase.description}</p>
-            </article>
-          ))}
-        </section>
-
-        <section className="rounded-[2rem] border border-slate-200 bg-white/85 p-8 shadow-[0_24px_80px_rgba(15,23,42,0.10)]">
-          <div className="grid gap-6 lg:grid-cols-2">
-            <div>
-              <p className="text-sm uppercase tracking-[0.22em] text-slate-500">
-                Phase 0 deliverables
-              </p>
-              <ul className="mt-4 space-y-3 text-sm leading-6 text-slate-700">
-                <li>Project scaffolded with Next.js 14, pnpm, Tailwind, and shadcn/ui.</li>
-                <li>Planning docs map the data model, API surface, and phased execution.</li>
-                <li>Kova branding is established early so later UI work lands on the right rails.</li>
-              </ul>
-            </div>
-            <div className="rounded-[1.5rem] border border-slate-200 bg-slate-50 p-5">
-              <p className="text-sm font-semibold text-slate-950">Reference blend</p>
-              <p className="mt-3 text-sm leading-6 text-slate-600">
-                Mercury-style dashboard structure, Linear-like execution detail, Ramp-level
-                savings hierarchy, and Stripe/Wise trust cues will guide the full UI build.
-              </p>
             </div>
           </div>
         </section>
