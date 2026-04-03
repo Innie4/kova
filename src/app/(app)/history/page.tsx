@@ -1,4 +1,15 @@
+import type { Metadata } from "next";
+import { Suspense } from "react";
 import { HistoryTable } from "@/components/kova/history-table";
+import { AppSectionLoading } from "@/components/kova/page-loading";
+import { createPageMetadata } from "@/lib/metadata";
+
+export const metadata: Metadata = createPageMetadata({
+  title: "History",
+  description:
+    "Review completed, pending, and failed Kova transfers with rail comparisons and public proof links.",
+  path: "/history",
+});
 
 export default function HistoryPage() {
   return (
@@ -15,7 +26,9 @@ export default function HistoryPage() {
           and export the current view for operations or demo use.
         </p>
       </section>
-      <HistoryTable />
+      <Suspense fallback={<AppSectionLoading cards={2} />}>
+        <HistoryTable />
+      </Suspense>
     </div>
   );
 }

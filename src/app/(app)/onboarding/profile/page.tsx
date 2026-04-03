@@ -1,7 +1,16 @@
+import type { Metadata } from "next";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button-styles";
 import { Input } from "@/components/ui/input";
 import { OnboardingStep } from "@/components/kova/onboarding-step";
+import { createPageMetadata } from "@/lib/metadata";
+
+export const metadata: Metadata = createPageMetadata({
+  title: "Onboarding Profile",
+  description:
+    "Capture your basic operator profile details before KYC and wallet activation in Kova.",
+  path: "/onboarding/profile",
+});
 
 export default function OnboardingProfilePage() {
   return (
@@ -27,9 +36,15 @@ export default function OnboardingProfilePage() {
         </div>
       </div>
       <div className="mt-8 flex gap-3">
-        <Button size="lg" className="h-11 rounded-2xl px-5" render={<Link href="/onboarding/kyc" />}>
+        <Link
+          href="/onboarding/kyc"
+          className={buttonVariants({
+            size: "lg",
+            className: "h-11 rounded-2xl px-5",
+          })}
+        >
           Continue to KYC
-        </Button>
+        </Link>
       </div>
     </OnboardingStep>
   );

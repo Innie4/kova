@@ -1,4 +1,15 @@
+import type { Metadata } from "next";
+import { Suspense } from "react";
+import { AppSectionLoading } from "@/components/kova/page-loading";
 import { SendFlow } from "@/components/kova/send-flow";
+import { createPageMetadata } from "@/lib/metadata";
+
+export const metadata: Metadata = createPageMetadata({
+  title: "Send Money",
+  description:
+    "Parse a transfer request, compare rails, confirm high-value payouts, and watch Kova execute the route.",
+  path: "/send",
+});
 
 export default function SendPage() {
   return (
@@ -15,7 +26,9 @@ export default function SendPage() {
           recipient, compare rails, execute, and open the resulting Kite attestation.
         </p>
       </section>
-      <SendFlow />
+      <Suspense fallback={<AppSectionLoading cards={2} />}>
+        <SendFlow />
+      </Suspense>
     </div>
   );
 }

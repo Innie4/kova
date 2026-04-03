@@ -4,7 +4,7 @@ import { Fragment, useMemo, useState } from "react";
 import Link from "next/link";
 import { TransferStatus } from "@prisma/client";
 import { ChevronDown, ChevronUp, Download, ShieldCheck } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import {
   Table,
   TableBody,
@@ -80,14 +80,17 @@ export function HistoryTable() {
           ))}
         </div>
 
-        <Button
-          variant="outline"
-          render={<a download="kova-transfer-history.csv" href={csvHref} />}
-          className="rounded-full px-4"
+        <a
+          download="kova-transfer-history.csv"
+          href={csvHref}
+          className={buttonVariants({
+            variant: "outline",
+            className: "rounded-full px-4",
+          })}
         >
           <Download className="size-4" />
           Export CSV
-        </Button>
+        </a>
       </div>
 
       <div className="rounded-[28px] border border-white/70 bg-white/80 p-4 shadow-[0_20px_50px_rgba(15,23,42,0.08)] backdrop-blur">

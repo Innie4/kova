@@ -1,8 +1,17 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { QrCode, Wallet2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button-styles";
 import { OnboardingStep } from "@/components/kova/onboarding-step";
 import { demoUser, formatCurrency } from "@/lib/demo-data";
+import { createPageMetadata } from "@/lib/metadata";
+
+export const metadata: Metadata = createPageMetadata({
+  title: "Onboarding Wallet",
+  description:
+    "Review your generated Kite passport wallet, funding address, and the final onboarding step in Kova.",
+  path: "/onboarding/wallet",
+});
 
 export default function OnboardingWalletPage() {
   return (
@@ -45,12 +54,25 @@ export default function OnboardingWalletPage() {
         </div>
       </div>
       <div className="mt-8 flex gap-3">
-        <Button variant="outline" size="lg" className="h-11 rounded-2xl px-5" render={<Link href="/onboarding/kyc" />}>
+        <Link
+          href="/onboarding/kyc"
+          className={buttonVariants({
+            variant: "outline",
+            size: "lg",
+            className: "h-11 rounded-2xl px-5",
+          })}
+        >
           Back
-        </Button>
-        <Button size="lg" className="h-11 rounded-2xl px-5" render={<Link href="/dashboard" />}>
+        </Link>
+        <Link
+          href="/dashboard"
+          className={buttonVariants({
+            size: "lg",
+            className: "h-11 rounded-2xl px-5",
+          })}
+        >
           I&apos;ve funded my wallet
-        </Button>
+        </Link>
       </div>
     </OnboardingStep>
   );

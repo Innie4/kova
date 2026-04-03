@@ -1,6 +1,15 @@
+import type { Metadata } from "next";
 import { ArrowDownLeft, ArrowUpRight, QrCode, ShieldCheck } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { demoUser, formatCurrency, formatShortDate, walletActivity } from "@/lib/demo-data";
+import { createPageMetadata } from "@/lib/metadata";
+
+export const metadata: Metadata = createPageMetadata({
+  title: "Wallet",
+  description:
+    "Monitor your Kova USDC balance, deposit address, passport reputation, and on-chain wallet activity.",
+  path: "/wallet",
+});
 
 export default function WalletPage() {
   return (

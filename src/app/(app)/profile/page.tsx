@@ -1,7 +1,16 @@
+import type { Metadata } from "next";
 import { demoRecipients, demoUser } from "@/lib/demo-data";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { createPageMetadata } from "@/lib/metadata";
+
+export const metadata: Metadata = createPageMetadata({
+  title: "Profile",
+  description:
+    "Manage operator details, notification preferences, saved recipients, and KYC status in Kova.",
+  path: "/profile",
+});
 
 export default function ProfilePage() {
   return (

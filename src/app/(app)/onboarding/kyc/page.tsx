@@ -1,7 +1,16 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { LockKeyhole } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button-styles";
 import { OnboardingStep } from "@/components/kova/onboarding-step";
+import { createPageMetadata } from "@/lib/metadata";
+
+export const metadata: Metadata = createPageMetadata({
+  title: "Onboarding KYC",
+  description:
+    "Upload identity documents for the Kova onboarding flow and prepare the account for verified transfers.",
+  path: "/onboarding/kyc",
+});
 
 export default function OnboardingKycPage() {
   return (
@@ -39,12 +48,25 @@ export default function OnboardingKycPage() {
         </div>
       </div>
       <div className="mt-8 flex gap-3">
-        <Button variant="outline" size="lg" className="h-11 rounded-2xl px-5" render={<Link href="/onboarding/profile" />}>
+        <Link
+          href="/onboarding/profile"
+          className={buttonVariants({
+            variant: "outline",
+            size: "lg",
+            className: "h-11 rounded-2xl px-5",
+          })}
+        >
           Back
-        </Button>
-        <Button size="lg" className="h-11 rounded-2xl px-5" render={<Link href="/onboarding/wallet" />}>
+        </Link>
+        <Link
+          href="/onboarding/wallet"
+          className={buttonVariants({
+            size: "lg",
+            className: "h-11 rounded-2xl px-5",
+          })}
+        >
           Continue to wallet
-        </Button>
+        </Link>
       </div>
     </OnboardingStep>
   );

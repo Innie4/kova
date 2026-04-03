@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { AttestationView } from "@/components/kova/attestation-view";
 import { getDemoTransferByHash } from "@/lib/demo-data";
+import { createPageMetadata } from "@/lib/metadata";
 
 export function generateMetadata({
   params,
@@ -16,10 +17,11 @@ export function generateMetadata({
     };
   }
 
-  return {
-    title: `Attestation ${transfer.attestationHash.slice(0, 8)}... | Kova`,
+  return createPageMetadata({
+    title: `Attestation ${transfer.attestationHash.slice(0, 8)}...`,
     description: `Public proof for ${transfer.recipientName}'s transfer via ${transfer.routeLabel}.`,
-  };
+    path: `/attestation/${params.hash}`,
+  });
 }
 
 export default function AttestationPage({

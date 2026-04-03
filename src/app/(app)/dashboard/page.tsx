@@ -1,7 +1,8 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, Copy, ShieldCheck, Sparkles } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button-styles";
 import {
   demoRecipients,
   demoTransfers,
@@ -10,6 +11,14 @@ import {
   formatShortDate,
 } from "@/lib/demo-data";
 import { TransferStatusBadge } from "@/components/kova/status-badge";
+import { createPageMetadata } from "@/lib/metadata";
+
+export const metadata: Metadata = createPageMetadata({
+  title: "Dashboard",
+  description:
+    "View your Kova balance, recent transfers, savings summary, and the latest attestation-backed activity.",
+  path: "/dashboard",
+});
 
 export default function DashboardPage() {
   return (
@@ -31,10 +40,16 @@ export default function DashboardPage() {
               Kova parses the instruction, compares live rails, and keeps the proof.
             </p>
           </div>
-          <Button size="lg" className="h-12 w-full rounded-2xl" render={<Link href="/send" />}>
+          <Link
+            href="/send"
+            className={buttonVariants({
+              size: "lg",
+              className: "h-12 w-full rounded-2xl",
+            })}
+          >
             Send Money
             <ArrowRight className="size-4" />
-          </Button>
+          </Link>
           <div>
             <p className="text-sm font-semibold uppercase tracking-[0.18em] text-slate-500">
               Recent recipients
@@ -118,9 +133,15 @@ export default function DashboardPage() {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4 px-6 pb-6">
-            <Button size="lg" className="h-11 w-full rounded-2xl" render={<Link href="/wallet" />}>
+            <Link
+              href="/wallet"
+              className={buttonVariants({
+                size: "lg",
+                className: "h-11 w-full rounded-2xl",
+              })}
+            >
               Add Funds
-            </Button>
+            </Link>
             <div className="rounded-[24px] border border-emerald-200 bg-emerald-50 p-4">
               <p className="text-sm text-emerald-700">30-day savings summary</p>
               <p className="mt-2 text-2xl font-semibold text-emerald-800">

@@ -1,8 +1,17 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, ShieldCheck, Sparkles } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button-styles";
 import { KovaLogo } from "@/components/kova/logo";
 import { routeMatrix, transferMilestones } from "@/lib/demo-data";
+import { createPageMetadata } from "@/lib/metadata";
+
+export const metadata: Metadata = createPageMetadata({
+  title: "Home",
+  description:
+    "Discover Kova's autonomous remittance flow with live rail comparison, savings visibility, and Kite Chain proof links.",
+  path: "/",
+});
 
 export default function Home() {
   return (
@@ -11,12 +20,21 @@ export default function Home() {
         <header className="flex items-center justify-between rounded-full border border-white/70 bg-white/80 px-5 py-3 shadow-[0_16px_40px_rgba(15,23,42,0.08)] backdrop-blur">
           <KovaLogo href="/" />
           <div className="flex items-center gap-3">
-            <Button variant="ghost" className="rounded-full px-5" render={<Link href="/auth/login" />}>
+            <Link
+              href="/auth/login"
+              className={buttonVariants({
+                variant: "ghost",
+                className: "rounded-full px-5",
+              })}
+            >
               Sign in
-            </Button>
-            <Button className="rounded-full px-5" render={<Link href="/dashboard" />}>
+            </Link>
+            <Link
+              href="/dashboard"
+              className={buttonVariants({ className: "rounded-full px-5" })}
+            >
               Open demo
-            </Button>
+            </Link>
           </div>
         </header>
 
@@ -35,18 +53,26 @@ export default function Home() {
               Chain proof trail afterward.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
-              <Button size="lg" className="h-12 rounded-full px-6" render={<Link href="/auth/login" />}>
+              <Link
+                href="/auth/login"
+                className={buttonVariants({
+                  size: "lg",
+                  className: "h-12 rounded-full px-6",
+                })}
+              >
                 Start with magic link
                 <ArrowRight className="size-4" />
-              </Button>
-              <Button
-                variant="outline"
-                size="lg"
-                className="h-12 rounded-full px-6"
-                render={<Link href="/attestation/0x4da0b8f714ce5f8d7f39d090be5eefb39f745c3d5cfaafb5878b05f3c0e357ca" />}
+              </Link>
+              <Link
+                href="/attestation/0x4da0b8f714ce5f8d7f39d090be5eefb39f745c3d5cfaafb5878b05f3c0e357ca"
+                className={buttonVariants({
+                  variant: "outline",
+                  size: "lg",
+                  className: "h-12 rounded-full px-6",
+                })}
               >
                 View sample proof
-              </Button>
+              </Link>
             </div>
             <div className="mt-10 grid gap-4 sm:grid-cols-3">
               {transferMilestones.map((milestone) => (

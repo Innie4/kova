@@ -2,11 +2,15 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { MailCheck } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { KovaLogo } from "@/components/kova/logo";
 
 export default function VerifyPage() {
+  const searchParams = useSearchParams();
+  const email = searchParams.get("email");
   const [cooldown, setCooldown] = useState(60);
 
   useEffect(() => {
@@ -20,6 +24,11 @@ export default function VerifyPage() {
 
     return () => window.clearTimeout(timeout);
   }, [cooldown]);
+
+  function handleResend() {
+    setCooldown(60);
+    toast.success("A fresh magic link is on its way.");
+  }
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-[radial-gradient(circle_at_top,rgba(12,130,221,0.14),transparent_30%),linear-gradient(180deg,#f8fbff_0%,#eef4fb_100%)] px-6 py-12">
@@ -38,18 +47,30 @@ export default function VerifyPage() {
           Open the magic link to continue into Kova. If it does not arrive, you can
           resend after the cooldown expires.
         </p>
+        {email ? (
+          <p className="mt-3 text-sm font-medium text-slate-700">
+            Sending to {email}
+          </p>
+        ) : null}
         <div className="mt-8 flex flex-wrap gap-3">
-          <Button size="lg" className="h-11 rounded-2xl px-5" disabled={cooldown > 0}>
-            {cooldown > 0 ? `Resend in ${cooldown}s` : "Resend link"}
-          </Button>
           <Button
-            variant="outline"
             size="lg"
             className="h-11 rounded-2xl px-5"
-            render={<Link href="/auth/login" />}
+            disabled={cooldown > 0}
+            onClick={handleResend}
+          >
+            {cooldown > 0 ? `Resend in ${cooldown}s` : "Resend link"}
+          </Button>
+          <Link
+            href="/auth/login"
+            className={buttonVariants({
+              variant: "outline",
+              size: "lg",
+              className: "h-11 rounded-2xl px-5",
+            })}
           >
             Use another email
-          </Button>
+          </Link>
         </div>
       </div>
     </main>

@@ -11,7 +11,8 @@ import {
   Sparkles,
   Wallet2,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
@@ -23,6 +24,7 @@ import {
   formatCurrency,
   routeMatrix,
   sendExamples,
+  agentExecutionSteps,
 } from "@/lib/demo-data";
 import { parseTransferIntent } from "@/lib/agent/intent-parser";
 import { cn } from "@/lib/utils";
@@ -78,10 +80,14 @@ export function SendFlow() {
         const parsed = parseTransferIntent(intentText);
         setParsedIntent(parsed);
         setStep("recipient");
+        toast.success("Intent parsed. Choose the recipient to continue.");
       } catch (error) {
+        const message =
+          error instanceof Error ? error.message : "Kova could not parse that request.";
         setParseError(
-          error instanceof Error ? error.message : "Kova could not parse that request.",
+          message,
         );
+        toast.error(message);
       }
     });
   }
@@ -95,6 +101,7 @@ export function SendFlow() {
       setRouteIndex(index);
     }
     setIsRouting(false);
+    toast.success("Kova compared the available rails.");
   }
 
   async function handleExecute() {
@@ -113,6 +120,7 @@ export function SendFlow() {
     }
     setIsExecuting(false);
     setStep("success");
+    toast.success("Transfer completed and attested on Kite Chain.");
   }
 
   return (
@@ -433,14 +441,7 @@ export function SendFlow() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3 px-6 pb-6">
-              {[
-                "Intent parsed",
-                "Rails queried (x402 payments made)",
-                "Best route selected",
-                "Executing transfer...",
-                "Writing to Kite chain...",
-                "Notifying recipient...",
-              ].map((label, index) => {
+              {agentExecutionSteps.map((label, index) => {
                 const done = executionIndex > index;
                 const current = executionIndex === index && isExecuting;
 
@@ -479,15 +480,15 @@ export function SendFlow() {
                 traditional remittance provider.
               </p>
               <div className="mt-6 flex flex-wrap gap-3">
-                <Button
-                  size="lg"
-                  className="h-11 rounded-2xl px-5"
-                  render={
-                    <Link href={`/attestation/${successTransfer.attestationHash}`} />
-                  }
+                <Link
+                  href={`/attestation/${successTransfer.attestationHash}`}
+                  className={buttonVariants({
+                    size: "lg",
+                    className: "h-11 rounded-2xl px-5",
+                  })}
                 >
                   View proof on Kite
-                </Button>
+                </Link>
                 <Button
                   variant="outline"
                   size="lg"
@@ -501,14 +502,16 @@ export function SendFlow() {
                 >
                   Send another
                 </Button>
-                <Button
-                  variant="ghost"
-                  size="lg"
-                  className="h-11 rounded-2xl px-5"
-                  render={<Link href="/dashboard" />}
+                <Link
+                  href="/dashboard"
+                  className={buttonVariants({
+                    variant: "ghost",
+                    size: "lg",
+                    className: "h-11 rounded-2xl px-5",
+                  })}
                 >
                   Back to dashboard
-                </Button>
+                </Link>
               </div>
             </CardContent>
           </Card>

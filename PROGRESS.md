@@ -2,7 +2,7 @@
 
 ## Current Phase
 
-- Active phase: `Phase 7 — End-to-End Testing & Hardening`
+- Active phase: `Phase 8 - Demo Preparation`
 - Status: `Ready to start`
 - Last updated: `2026-04-03`
 
@@ -24,7 +24,7 @@
 - Added Prisma database singleton, Supabase browser config helpers, auth middleware, and tRPC context/router wiring.
 - Added placeholder auth and protected app routes so route protection resolves to real pages.
 - Added Vitest and Playwright config for scoped test discovery.
-- Verified `pnpm lint`, `pnpm test`, `pnpm test:e2e`, and `pnpm build` all pass.
+- Verified `pnpm lint`, `pnpm test`, `pnpm test:e2e`, and `pnpm build` all pass after Phase 1.
 - Added Phase 2 Kite config, types, and client modules in `src/lib/config/kite.ts`, `src/types/kite.ts`, and `src/lib/kite/*`.
 - Installed and integrated `gokite-aa-sdk` and `ethers`.
 - Implemented deterministic Kite Passport derivation, live testnet balance reads, x402 challenge fetching, gasless relay submission, and on-chain attestation writing helpers.
@@ -53,16 +53,21 @@
 - Implemented the new App Router endpoints under `src/app/api/webhooks/*`, `src/app/api/wallet/*`, and `src/app/api/kyc/*`.
 - Added Phase 6 unit and integration coverage for webhook signature validation, wallet balance formatting, KYC upload validation, and transfer status updates.
 - Re-verified `pnpm lint`, `pnpm test`, `pnpm test:e2e`, and `pnpm build` all pass after the API route phase.
+- Added Phase 7 seed support in `prisma/seed.ts` and wired `pnpm db:seed` through Prisma using `tsx`.
+- Added self-starting Playwright web-server configuration and expanded e2e coverage with `tests/e2e/auth.spec.ts` and `tests/e2e/send-money-large.spec.ts`.
+- Added App Router loading states, metadata helpers, rate limiting for `/api/trpc/[trpc]`, and a shared server-safe button style module.
+- Replaced the bootstrap README with a production-style setup guide, added `.env.example`, and added `vercel.json`.
+- Verified `pnpm lint`, `pnpm test`, `pnpm test:e2e`, and `pnpm build` all pass after the hardening phase.
 
 ## In Progress
 
-- No active implementation. Phase 6 verification passed and the repo is ready for Phase 7.
+- No active implementation. Phase 7 is complete and Phase 8 has not started yet.
 
 ## Next Up
 
-1. Expand the Playwright suite to cover auth, large-transfer confirmation, and the remaining Phase 7 scenarios.
-2. Add database seeding, hardening checks, loading states, metadata, and security/rate-limiting passes.
-3. Prepare `.env.example`, `README.md`, and deployment configuration for the final production-ready sweep.
+1. Add `DEMO_MODE` behavior that auto-runs the seeded transfer flow with presentation-friendly delays.
+2. Align seeded data and dashboard copy to the final hackathon demo sequence and cumulative savings story.
+3. Validate the full 90-second walkthrough from dashboard to public attestation and history refresh.
 
 ## Recovery Notes
 
@@ -72,8 +77,9 @@ If work resumes after interruption:
 2. Read `CLAUDE.md` for conventions and Kite config references.
 3. Run `pnpm lint`
 4. Run `pnpm test`
-5. Run `pnpm build`
-6. Continue from the first unchecked Phase 7 item.
+5. Run `pnpm test:e2e`
+6. Run `pnpm build`
+7. Continue from the first unchecked item in Phase 8.
 
 ## Assumptions
 
@@ -83,11 +89,12 @@ If work resumes after interruption:
 - `prisma migrate dev --name init` could not be completed against the placeholder local Postgres URL because no live database was available; a SQL migration artifact was generated instead so the schema state is still checkpointed in-repo.
 - Kite public testnet reads are live today in this environment: RPC chain info, gasless supported token discovery, and x402 payment challenge retrieval all hit official public endpoints during tests.
 - Kite signed write paths are implemented but require `KITE_SERVICE_PRIVATE_KEY` to submit real on-chain payments, gasless relay signatures, and attestation transactions; without that env var, the code falls back to deterministic hashes for local verification.
-- The current public Kite docs do not expose a stable attestation registry contract flow, so attestation writes are presently anchored as self-addressed Kite transactions carrying serialized payload data. This is an implementation inference chosen to keep proofs on-chain with today’s documented primitives.
+- The current public Kite docs do not expose a stable attestation registry contract flow, so attestation writes are presently anchored as self-addressed Kite transactions carrying serialized payload data. This is an implementation inference chosen to keep proofs on-chain with today's documented primitives.
 - Wise quotes are wired against the current sandbox host `https://api.wise-sandbox.com/v3/quotes`, which returned live sandbox payloads during the integration test in this phase.
 - Kotani integration is keyed to the current sandbox docs host `https://docs.kotanipay.com/` and uses the authenticated `/api/v3/rate/{from}/{to}` exchange-rate endpoint plus corridor pricing assumptions from published market coverage; unsupported or unconfigured corridors degrade cleanly and the mock rail remains available.
 - Phase 4 executes Kite native transfers through AA user operations signed by the deterministic owner wallet derived for each user, while non-native rails currently complete with explicit simulated settlement references because this repo only has quote integrations for those providers at this stage.
-- Phase 5 uses a shared demo data layer to keep the new frontend pages visually and narratively consistent while the live API routes and frontend data fetching are completed in the next phases.
-- Middleware now allows protected routes through in local development or `DEMO_MODE=true` when Supabase credentials are absent, so the frontend can be reviewed and exercised locally without weakening authenticated behavior in configured environments.
+- Phase 5 uses a shared demo data layer to keep the frontend pages visually and narratively consistent while the live API routes and frontend data fetching are completed in the next phases.
+- Middleware allows protected routes through in local development or `DEMO_MODE=true` when Supabase credentials are absent, so the frontend can be reviewed and exercised locally without weakening authenticated behavior in configured environments.
 - Phase 6 webhook verification uses HMAC-SHA256 signatures from `WISE_WEBHOOK_SECRET` and `KOTANI_WEBHOOK_SECRET`; if those secrets are unset in local development or demo mode, the handlers allow a controlled bypass so the routes remain testable in this workspace.
 - KYC uploads store to Supabase Storage when `SUPABASE_SERVICE_ROLE_KEY` is configured and fall back to deterministic simulated paths when it is not, while still recording the metadata hash and Kite attestation.
+- `pnpm exec vercel build --yes` still cannot complete in this environment because the Vercel CLI reports an invalid token and there is no linked `.vercel/project.json` yet. The app-side deployment configuration is committed, but the final Vercel build check needs a valid authenticated Vercel session or a linked project.

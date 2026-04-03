@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { LockKeyhole, MailCheck, ShieldCheck } from "lucide-react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { KovaLogo } from "@/components/kova/logo";
@@ -16,6 +17,8 @@ export default function LoginPage() {
     setLoading(true);
     await new Promise((resolve) => setTimeout(resolve, 900));
     setLoading(false);
+    toast.success("Magic link sent. Check your inbox to continue.");
+    window.location.assign(`/auth/verify?email=${encodeURIComponent(email)}`);
   }
 
   return (
@@ -59,8 +62,14 @@ export default function LoginPage() {
           </p>
           <div className="mt-8 space-y-4">
             <div className="space-y-2">
-              <label className="text-sm font-medium text-slate-700">Email</label>
+              <label
+                htmlFor="magic-link-email"
+                className="text-sm font-medium text-slate-700"
+              >
+                Email
+              </label>
               <Input
+                id="magic-link-email"
                 value={email}
                 onChange={(event) => setEmail(event.target.value)}
                 className="h-12 rounded-2xl border-slate-200 bg-slate-50 px-4"

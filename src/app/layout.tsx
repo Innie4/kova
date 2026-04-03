@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
+import { rootMetadata } from "@/lib/metadata";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -16,11 +17,7 @@ const geistMono = localFont({
   weight: "100 900",
 });
 
-export const metadata: Metadata = {
-  title: "Kova",
-  description:
-    "Kova is an autonomous remittance agent that compares rails, executes transfers, and writes verifiable proofs on Kite Chain.",
-};
+export const metadata: Metadata = rootMetadata;
 
 export default function RootLayout({
   children,
