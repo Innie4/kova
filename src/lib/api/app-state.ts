@@ -39,6 +39,13 @@ const defaultDependencies: AppStateDependencies = {
   db,
 };
 
+function shouldSkipDatabaseReads() {
+  return (
+    process.env.npm_lifecycle_event === "build" ||
+    process.env.NEXT_PHASE === "phase-production-build"
+  );
+}
+
 const countryCodeMap: Record<string, string> = {
   Nigeria: "NG",
   Ghana: "GH",
@@ -294,6 +301,10 @@ function getFallbackProfileSnapshot(): ProfileSnapshot {
 export async function getDashboardSnapshot(
   overrides: Partial<AppStateDependencies> = {},
 ): Promise<DashboardSnapshot> {
+  if (shouldSkipDatabaseReads()) {
+    return getFallbackDashboardSnapshot();
+  }
+
   try {
     const dependencies = {
       ...defaultDependencies,
@@ -349,6 +360,10 @@ export async function getHistorySnapshot(
   params: { status?: TransferStatus } = {},
   overrides: Partial<AppStateDependencies> = {},
 ): Promise<HistorySnapshot> {
+  if (shouldSkipDatabaseReads()) {
+    return getFallbackHistorySnapshot(params.status);
+  }
+
   try {
     const dependencies = {
       ...defaultDependencies,
@@ -386,6 +401,10 @@ export async function getHistorySnapshot(
 export async function getWalletSnapshot(
   overrides: Partial<AppStateDependencies> = {},
 ): Promise<WalletSnapshot> {
+  if (shouldSkipDatabaseReads()) {
+    return getFallbackWalletSnapshot();
+  }
+
   try {
     const dependencies = {
       ...defaultDependencies,
@@ -441,6 +460,10 @@ export async function getWalletSnapshot(
 export async function getProfileSnapshot(
   overrides: Partial<AppStateDependencies> = {},
 ): Promise<ProfileSnapshot> {
+  if (shouldSkipDatabaseReads()) {
+    return getFallbackProfileSnapshot();
+  }
+
   try {
     const dependencies = {
       ...defaultDependencies,

@@ -1,5 +1,5 @@
-import { createServerClient } from "@supabase/auth-helpers-nextjs";
 import { NextResponse, type NextRequest } from "next/server";
+import { createServerClient } from "@supabase/ssr";
 import { getSupabaseConfig, isSupabaseConfigured } from "@/lib/supabase";
 
 function buildLoginRedirect(request: NextRequest): NextResponse {

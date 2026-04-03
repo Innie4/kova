@@ -4,6 +4,14 @@ const nextConfig = {
   experimental: {
     optimizePackageImports: ["lucide-react"],
   },
+  webpack: (config) => {
+    config.infrastructureLogging = {
+      ...config.infrastructureLogging,
+      level: "error",
+    };
+
+    return config;
+  },
 };
 
 export default nextConfig;

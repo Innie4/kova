@@ -1,6 +1,6 @@
-import { createServerClient } from "@supabase/auth-helpers-nextjs";
 import { TRPCError, initTRPC } from "@trpc/server";
 import { cookies } from "next/headers";
+import { createServerClient } from "@supabase/ssr";
 import type { Session } from "@supabase/supabase-js";
 import { getSupabaseConfig, isSupabaseConfigured } from "@/lib/supabase";
 import { db } from "@/server/db";
@@ -41,6 +41,9 @@ async function resolveSupabaseClient(
           name: cookie.name,
           value: cookie.value,
         })),
+      setAll: () => {
+        // tRPC context only needs read access to the current auth cookies.
+      },
     },
   });
 }

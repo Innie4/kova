@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { getProfileSnapshot } from "@/lib/api/app-state";
 
+export const dynamic = "force-dynamic";
+
 export async function GET() {
   try {
     const payload = await getProfileSnapshot();
