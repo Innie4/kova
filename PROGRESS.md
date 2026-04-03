@@ -2,7 +2,7 @@
 
 ## Current Phase
 
-- Active phase: `Phase 1 — Database & Auth`
+- Active phase: `Phase 2 — Kite Chain Integration`
 - Status: `Ready to start`
 - Last updated: `2026-04-03`
 
@@ -18,16 +18,23 @@
 - Added the Kova logo to `public/brand/kova-logo.png`.
 - Replaced the default landing page with a branded bootstrap status page.
 - Created `PLAN.md`, `PROGRESS.md`, and `CLAUDE.md`.
+- Implemented the Phase 1 Prisma schema at `prisma/schema.prisma`.
+- Added Prisma 7 project configuration in `prisma.config.ts`.
+- Generated a SQL migration artifact at `prisma/migrations/20260403_phase1_init/migration.sql`.
+- Added Prisma database singleton, Supabase browser config helpers, auth middleware, and tRPC context/router wiring.
+- Added placeholder auth and protected app routes so route protection resolves to real pages.
+- Added Vitest and Playwright config for scoped test discovery.
+- Verified `pnpm lint`, `pnpm test`, `pnpm test:e2e`, and `pnpm build` all pass.
 
 ## In Progress
 
-- No active implementation. Phase 0 verification passed and the repo is ready for Phase 1.
+- No active implementation. Phase 1 verification passed and the repo is ready for Phase 2.
 
 ## Next Up
 
 1. Fix any bootstrap verification issues.
-2. Start Phase 1 by defining Prisma schema and DB helpers.
-3. Add Supabase auth wiring and tRPC scaffolding.
+2. Start Phase 2 by wiring Kite AA, x402, and attestation services.
+3. Validate the live Kite testnet touchpoints against current docs and env configuration.
 
 ## Recovery Notes
 
@@ -38,10 +45,11 @@ If work resumes after interruption:
 3. Run `pnpm lint`
 4. Run `pnpm test`
 5. Run `pnpm build`
-6. Continue from the first unchecked Phase 1 item.
+6. Continue from the first unchecked Phase 2 item.
 
 ## Assumptions
 
 - The product name is `Kova` everywhere user-facing, while the PRD content remains the implementation source.
 - The current Kite documentation host is `docs.gokite.ai`; older `docs.kiteai.xyz` links are treated as stale.
 - Since the root workspace folder uses a capitalized name, the npm package name is lowercased to `kova`.
+- `prisma migrate dev --name init` could not be completed against the placeholder local Postgres URL because no live database was available; a SQL migration artifact was generated instead so the schema state is still checkpointed in-repo.
